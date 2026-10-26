@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,20 +12,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "E-Waste Value Recovery | Consumer-First Electronics Evaluation",
+  title: "E-Waste Value Recovery | Editorial Circular Hardware Valuation",
   description:
-    "Compare repair, cash resale, trade-in, refurbishment, donation, and certified recycling for unwanted or faulty electronics and appliances.",
+    "An independent decision engine comparing repair, cash buyback, store vouchers, component harvesting, and certified material recycling across Delhi NCR.",
   keywords: [
-    "e-waste recovery",
+    "e-waste value recovery",
     "electronics repair vs replace",
-    "device trade-in comparison",
-    "sell broken electronics",
-    "authorised e-waste recycling",
-    "data sanitisation guide",
-    "WEEE recycling"
+    "delhi e-waste pilot",
+    "device trade-in valuation",
+    "lithium battery safety guidelines",
+    "authorised recycling Delhi CPCB DPCC",
+    "hardware lifecycle recovery"
   ],
-  authors: [{ name: "E-Waste Value Recovery Project" }],
+  authors: [{ name: "E-Waste Value Recovery Project · Delhi Pilot" }],
 };
 
 export default function RootLayout({
@@ -36,9 +43,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900">
+      <body className="min-h-full flex flex-col font-sans bg-[#F7F5EE] text-[#141413] selection:bg-[#1B3B2B] selection:text-[#F7F5EE]">
         {children}
       </body>
     </html>

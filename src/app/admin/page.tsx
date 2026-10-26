@@ -36,15 +36,15 @@ async function AdminDataLoader() {
 function AdminLoadingSkeleton() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-pulse space-y-6">
-      <div className="h-28 bg-slate-200 rounded-3xl w-full" />
-      <div className="h-64 bg-slate-200 rounded-3xl w-full" />
+      <div className="h-28 bg-[#EAE6DD] rounded-sm w-full" />
+      <div className="h-64 bg-[#EAE6DD] rounded-sm w-full" />
     </div>
   );
 }
 
 export default function AdminPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-[#F7F5EE] text-[#141413]">
       <Header />
       <main className="flex-1">
         <Suspense fallback={<AdminLoadingSkeleton />}>

@@ -1,201 +1,316 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { Button } from "../ui/Button";
-import { Menu, X, ShieldCheck, ArrowRight, Layers } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, ArrowUpRight, Cpu } from "lucide-react";
 
-export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+interface NavItem {
+  href: string;
+  label: string;
+  index: string;
+  badge?: string;
+}
 
+const PRIMARY_NAV: NavItem[] = [
+  { href: "/find-option", label: "Assess Hardware", index: "01" },
+  { href: "/directory", label: "Provider Directory", index: "02" },
+  { href: "/dashboard", label: "Case Dossier", index: "03" },
+  { href: "/analytics", label: "Impact & LCA", index: "04" },
+];
+
+function HeaderFallback() {
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo / Brand */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold shadow-xs group-hover:bg-emerald-900 transition-colors">
-              <Layers className="w-5 h-5 text-emerald-200" />
-            </div>
-            <div>
-              <span className="font-bold text-slate-900 text-lg tracking-tight block leading-tight">
-                E-Waste Value Recovery
-              </span>
-              <span className="text-xs text-slate-500 font-medium block leading-none">
-                Consumer-First Electronics Guidance
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
-            <Link
-              href="/#pathways"
-              className="hover:text-slate-900 transition-colors py-1"
-            >
-              The 6 Options
+    <header className="sticky top-0 z-50 bg-[#F7F5EE]/95 backdrop-blur-md border-b border-[#DFD9CD] transition-colors">
+      <div className="hidden sm:block border-b border-[#EBE6DB] bg-[#F1EDE3] px-4 sm:px-6 lg:px-8 py-1 text-[11px] font-mono text-[#6B675E]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1B3B2B]" />
+            <span>DELHI PILOT INTAKE ACTIVE · 6 AUDITED RECOVERY NETWORKS</span>
+          </span>
+          <div className="flex items-center gap-4">
+            <span>ZERO SPONSORED LISTINGS</span>
+            <span className="text-[#C7BFB0]">/</span>
+            <Link href="/admin" className="hover:text-[#141413] underline transition-colors">
+              OPERATIONS CONSOLE
             </Link>
-            <Link
-              href="/#categories"
-              className="hover:text-slate-900 transition-colors py-1"
-            >
-              Device Categories
-            </Link>
-            <Link
-              href="/#how-it-works"
-              className="hover:text-slate-900 transition-colors py-1"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/#guardrails"
-              className="hover:text-slate-900 transition-colors py-1"
-            >
-              Data & Safety Check
-            </Link>
-            <Link
-              href="/find-option"
-              className="hover:text-slate-900 transition-colors py-1 font-semibold text-emerald-800"
-            >
-              Compare Pathways
-            </Link>
-            <Link
-              href="/directory"
-              className="hover:text-slate-900 transition-colors py-1 font-medium text-slate-600 hover:text-slate-900"
-            >
-              Directory
-            </Link>
-            <Link
-              href="/dashboard"
-              className="hover:text-slate-900 transition-colors py-1 font-medium text-slate-600 hover:text-slate-900"
-            >
-              My Cases
-            </Link>
-            <Link
-              href="/analytics"
-              className="hover:text-slate-900 transition-colors py-1 font-medium text-slate-600 hover:text-slate-900"
-            >
-              Impact
-            </Link>
-            <Link
-              href="/#faq"
-              className="hover:text-slate-900 transition-colors py-1"
-            >
-              FAQ
-            </Link>
-          </nav>
-
-          {/* Action CTAs */}
-          <div className="hidden md:flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Independent & Ad-Free</span>
-            </div>
-            <Button href="/find-option" variant="primary" size="md">
-              Find Best Option
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-
-          {/* Mobile hamburger */}
-          <div className="flex md:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
-              aria-label="Toggle navigation menu"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-navigation"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile menu dropdown */}
-      {mobileMenuOpen && (
-        <div id="mobile-navigation" className="md:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200 mb-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-            <span>Independent assessment. No sponsored placements.</span>
-          </div>
-          <Link
-            href="/#pathways"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            The 6 Options
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-sm bg-[#1B3B2B] text-[#F7F5EE] flex items-center justify-center shrink-0 border border-[#142D21]">
+              <Cpu className="w-4 h-4 text-[#C1DFDC]" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#141413] leading-none">
+                E-Waste Value Recovery
+              </span>
+              <span className="font-mono text-[10px] text-[#736F66] tracking-wider uppercase mt-1">
+                Circular Hardware Registry · Delhi
+              </span>
+            </div>
           </Link>
-          <Link
-            href="/#categories"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Device Categories
-          </Link>
-          <Link
-            href="/#how-it-works"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            How It Works
-          </Link>
-          <Link
-            href="/#guardrails"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Data & Safety Check
-          </Link>
-          <Link
-            href="/find-option"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-semibold text-emerald-800 hover:bg-slate-50 rounded-md"
-          >
-            Compare Pathways &amp; Providers
-          </Link>
-          <Link
-            href="/directory"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Provider Directory
-          </Link>
-          <Link
-            href="/dashboard"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            My Cases
-          </Link>
-          <Link
-            href="/analytics"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Impact &amp; Analytics
-          </Link>
-          <Link
-            href="/#faq"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            FAQ
-          </Link>
-          <div className="pt-2">
-            <Button
+          <div className="hidden md:flex items-center gap-3">
+            <Link
               href="/find-option"
-              variant="primary"
-              size="lg"
-              className="w-full justify-center"
-              onClick={() => setMobileMenuOpen(false)}
+              className="px-4 py-2 bg-[#1B3B2B] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5"
             >
-              Find the Best Option
-            </Button>
+              <span>Assess a Device</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeaderInner() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  // Close mobile menu on route change
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setMobileMenuOpen(false);
+  }
+
+  // Handle escape key and body scroll locking
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
+  return (
+    <>
+      <header className="sticky top-0 z-50 bg-[#F7F5EE]/95 backdrop-blur-md border-b border-[#DFD9CD] transition-colors">
+        {/* Top Institutional Micro-Banner */}
+        <div className="hidden sm:block border-b border-[#EBE6DB] bg-[#F1EDE3] px-4 sm:px-6 lg:px-8 py-1 text-[11px] font-mono text-[#6B675E]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1B3B2B] animate-pulse" />
+              <span>DELHI PILOT INTAKE ACTIVE · 6 AUDITED RECOVERY NETWORKS</span>
+            </span>
+            <div className="flex items-center gap-4">
+              <span>ZERO SPONSORED LISTINGS</span>
+              <span className="text-[#C7BFB0]">/</span>
+              <Link
+                href="/admin"
+                className="hover:text-[#141413] underline transition-colors"
+              >
+                OPERATIONS CONSOLE
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Navbar */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            {/* Typographic Wordmark */}
+            <Link
+              href="/"
+              className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B3B2B]"
+            >
+              <div className="w-8 h-8 rounded-sm bg-[#1B3B2B] text-[#F7F5EE] flex items-center justify-center shrink-0 border border-[#142D21] transition-transform duration-200 group-hover:scale-95">
+                <Cpu className="w-4 h-4 text-[#C1DFDC]" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#141413] leading-none">
+                  E-Waste Value Recovery
+                </span>
+                <span className="font-mono text-[10px] text-[#736F66] tracking-wider uppercase mt-1">
+                  Circular Hardware Registry · Delhi
+                </span>
+              </div>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav
+              className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-mono uppercase tracking-wider"
+              aria-label="Primary navigation"
+            >
+              {PRIMARY_NAV.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href));
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative px-3 py-2 transition-colors flex items-center gap-1.5 group ${
+                      isActive
+                        ? "text-[#141413] font-semibold"
+                        : "text-[#6B675E] hover:text-[#141413]"
+                    }`}
+                  >
+                    <span className="text-[10px] text-[#A69E8C] group-hover:text-[#736F66] transition-colors">
+                      {item.index}
+                    </span>
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#1B3B2B]" />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Action CTA & Micro Badging */}
+            <div className="hidden md:flex items-center gap-3">
+              <Link
+                href="/find-option"
+                className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#142D21] flex items-center gap-1.5 shadow-xs hover:shadow-sm active:translate-y-px"
+              >
+                <span>Assess a Device</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
+              </Link>
+            </div>
+
+            {/* Mobile Menu Toggle Button */}
+            <div className="flex items-center md:hidden gap-2">
+              <Link
+                href="/find-option"
+                className="px-2.5 py-1.5 bg-[#1B3B2B] text-[#F7F5EE] text-[11px] font-mono uppercase rounded-sm border border-[#142D21]"
+              >
+                Assess
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-[#413F3B] hover:text-[#141413] hover:bg-[#EFECE2] rounded-sm transition-colors border border-[#D4CDC0]"
+                aria-expanded={mobileMenuOpen}
+                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-[#141413]/40 backdrop-blur-xs md:hidden animate-fade-in"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div
+            className="fixed inset-y-0 right-0 w-full max-w-xs bg-[#F7F5EE] border-l border-[#DFD9CD] shadow-xl p-6 flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
+          >
+            <div>
+              {/* Drawer Top Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-[#DFD9CD]">
+                <div className="flex flex-col">
+                  <span className="font-serif font-bold text-base text-[#141413]">
+                    Navigation
+                  </span>
+                  <span className="font-mono text-[10px] text-[#736F66] uppercase">
+                    Delhi Recovery Dispatch
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1.5 text-[#413F3B] hover:text-[#141413] border border-[#D4CDC0] rounded-sm"
+                  aria-label="Close menu"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Navigation Items */}
+              <nav className="mt-6 space-y-1 font-mono text-xs uppercase">
+                {PRIMARY_NAV.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/" && pathname.startsWith(item.href));
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between p-3 rounded-sm border transition-colors ${
+                        isActive
+                          ? "bg-[#1B3B2B] text-[#F7F5EE] border-[#142D21]"
+                          : "bg-[#FAF8F3] text-[#383632] border-[#E5E0D4] hover:bg-[#EFECE2]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className={`text-[10px] ${
+                            isActive ? "text-[#C1DFDC]" : "text-[#736F66]"
+                          }`}
+                        >
+                          {item.index}
+                        </span>
+                        <span className="font-medium tracking-tight">{item.label}</span>
+                      </div>
+                      <ArrowUpRight
+                        className={`w-3.5 h-3.5 ${
+                          isActive ? "text-[#C1DFDC]" : "text-[#A69E8C]"
+                        }`}
+                      />
+                    </Link>
+                  );
+                })}
+
+                <div className="pt-4 border-t border-[#DFD9CD] mt-4 space-y-1">
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 text-[11px] text-[#6B675E] hover:text-[#141413] hover:bg-[#EFECE2] rounded-sm"
+                  >
+                    <span>Operations Console (Admin)</span>
+                    <span className="text-[9px] bg-[#E5E0D4] px-1.5 py-0.5 rounded-xs">SECURE</span>
+                  </Link>
+                </div>
+              </nav>
+            </div>
+
+            {/* Drawer Bottom Metadata */}
+            <div className="pt-6 border-t border-[#DFD9CD] text-[11px] font-mono text-[#736F66] space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#1B3B2B]" />
+                <span>CPCB / DPCC REGULATORY ALIGNED</span>
+              </div>
+              <p className="text-[10px] leading-relaxed text-[#8F8A7E]">
+                Independent hardware valuation framework. Zero commercial vendor sponsorship.
+              </p>
+            </div>
           </div>
         </div>
       )}
-    </header>
+    </>
+  );
+}
+
+export function Header() {
+  return (
+    <Suspense fallback={<HeaderFallback />}>
+      <HeaderInner />
+    </Suspense>
   );
 }

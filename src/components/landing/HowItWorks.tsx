@@ -1,98 +1,126 @@
 import React from "react";
-import { Badge } from "../ui/Badge";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 export function HowItWorks() {
   const steps = [
     {
-      stepNumber: "01",
-      title: "Assess Hardware & Functional Reality",
+      index: "01",
+      phase: "DIAGNOSTIC",
+      title: "Assess Hardware Reality",
       description:
-        "Select your device category and disclose genuine condition: working, cosmetically worn, repairable fault, dead motherboard, or battery degradation.",
-      details: [
-        "No inflated estimates based on best-case assumptions",
-        "Clear demarcation between cosmetic flaws and critical system faults",
-        "Instant identification of hazardous materials (e.g. swollen cells)"
-      ]
+        "Disclose true functional condition — recent working, minor component fault, obsolete firmware, major board failure, or swollen battery hazard.",
+      deliverable: "Deterministic categorization + safety classification",
+      meta: "CRITERIA: PHYSICAL / ELECTRICAL",
     },
     {
-      stepNumber: "02",
-      title: "Evaluate Transparent Trade-offs",
+      index: "02",
+      phase: "VALUATION",
+      title: "Compare 6 Recovery Pathways",
       description:
-        "Compare the 6 practical pathways side by side: calculate whether repair makes economic sense, compare direct cash vs. retailer trade-in, or evaluate salvage potential.",
-      details: [
-        "Real comparison of net payout versus time investment and shipping risk",
-        "Honest breakdown of store-locked voucher restrictions vs. liquid cash",
-        "Charitable donation criteria so you never burden non-profits with junk"
-      ]
+        "Evaluate estimated liquid cash payout, trade-in vouchers, repair costs, donor salvage viability, charity criteria, and zero-landfill certified recycling side-by-side.",
+      deliverable: "Ranked trade-off matrix with effort vs. return",
+      meta: "ENGINE: OBJECTIVE ALGORITHM",
     },
     {
-      stepNumber: "03",
-      title: "Execute with Safe Guardrails",
+      index: "03",
+      phase: "LOGISTICS",
+      title: "Connect with Audited Intake",
       description:
-        "Follow rigorous security and regulatory protocols before your device leaves your hands.",
-      details: [
-        "Cryptographic storage sanitisation protocols (NIST 800-88 compliant)",
-        "Activation lock decoupling instructions (iCloud, Google FRP, Microsoft Knox)",
-        "Accreditation criteria to verify licensed e-waste handlers (WEEE / e-Stewards)"
-      ]
-    }
+        "Match against documented physical kiosks, service centers, and certified collection bays in Delhi NCR. Clear distinction between counter walk-in and pickup.",
+      deliverable: "Verified facility address, SLA & acceptance criteria",
+      meta: "DISPATCH: EXACT PINCODE MATCH",
+    },
+    {
+      index: "04",
+      phase: "VERIFICATION",
+      title: "Verify Final Outcome",
+      description:
+        "Track case progression through a 10-stage lifecycle manifest. Record actual receipts, bank transfer confirmation, or certified destruction certificates.",
+      deliverable: "Tamper-evident audit trail & LCA environmental impact",
+      meta: "AUDIT: DUAL-TIER VERIFIED",
+    },
   ];
 
   return (
-    <section id="how-it-works" className="py-16 lg:py-24 bg-slate-50 border-b border-slate-200 scroll-mt-20">
+    <section id="how-it-works" className="py-16 lg:py-24 bg-[#FAF8F3] border-b border-[#DFD9CD] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mb-12">
-          <Badge variant="neutral" className="mb-3">
-            Methodology
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
-            How E-Waste Value Recovery Works
-          </h2>
-          <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            A three-step evidence framework designed to put consumers in control,
-            eliminate commercial misinformation, and prevent premature e-waste.
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[#DFD9CD] mb-12">
+          <div className="space-y-2 max-w-2xl">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#736F66] block">
+              PHASE ARCHITECTURE // 01 &rarr; 04
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#141413] tracking-tight">
+              A structured lifecycle sequence from drawer to recovery.
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#413F3B] max-w-md leading-relaxed font-sans">
+            Rather than directing all electronics to a recycling bin, the platform establishes
+            the highest utility tier before processing down to raw scrap metal.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step, idx) => (
+        {/* 4-Step Editorial Flow */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((step) => (
             <div
-              key={idx}
-              className="bg-white rounded-2xl border border-slate-200 p-7 flex flex-col justify-between shadow-2xs relative"
+              key={step.index}
+              className="bg-[#F7F5EE] border border-[#D4CDC0] rounded-sm p-6 flex flex-col justify-between hover:border-[#1B3B2B] transition-colors group relative"
             >
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="w-11 h-11 rounded-xl bg-slate-900 text-white font-mono font-bold text-sm flex items-center justify-center">
-                    {step.stepNumber}
+              {/* Step Header */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E5E0D4] font-mono">
+                  <span className="text-xl font-bold text-[#141413] tracking-tight group-hover:text-[#1B3B2B] transition-colors">
+                    {step.index}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
-                    Step {idx + 1}
+                  <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 bg-[#EFECE2] text-[#413F3B] border border-[#D4CDC0] rounded-xs">
+                    {step.phase}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">
+                <h3 className="font-serif text-lg font-bold text-[#141413] tracking-tight leading-snug">
                   {step.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 mb-5 leading-relaxed">
+
+                <p className="text-xs text-[#413F3B] leading-relaxed font-sans">
                   {step.description}
                 </p>
+              </div>
 
-                <div className="border-t border-slate-100 pt-4">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-                    Evidence Standards:
-                  </h4>
-                  <ul className="space-y-2 text-xs text-slate-700">
-                    {step.details.map((detail, dIdx) => (
-                      <li key={dIdx} className="flex items-start gap-2">
-                        <span className="text-emerald-700 font-bold shrink-0 mt-0.5">&bull;</span>
-                        <span className="leading-snug">{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {/* Step Footer Metadata */}
+              <div className="pt-6 mt-6 border-t border-[#E5E0D4] space-y-2 font-mono text-[11px]">
+                <div className="text-[#141413] font-semibold text-[10px] uppercase">
+                  Outcome:
+                </div>
+                <div className="text-[#413F3B] text-[11px] leading-tight">
+                  {step.deliverable}
+                </div>
+                <div className="text-[10px] text-[#736F66] pt-1">
+                  {step.meta}
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Direct Action Link */}
+        <div className="mt-12 p-6 bg-[#EFECE2] border border-[#D4CDC0] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <span className="font-serif font-bold text-base text-[#141413] block">
+              Ready to diagnose your retired equipment?
+            </span>
+            <span className="text-xs text-[#6B675E] block font-sans">
+              Takes 90 seconds. No user registration or contact number required to view full trade-off comparisons.
+            </span>
+          </div>
+          <Link
+            href="/find-option"
+            className="px-5 py-2.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm shrink-0 flex items-center gap-1.5 transition-colors"
+          >
+            <span>Start Assessment</span>
+            <ArrowUpRight className="w-4 h-4 text-[#C1DFDC]" />
+          </Link>
         </div>
       </div>
     </section>

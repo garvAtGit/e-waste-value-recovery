@@ -12,7 +12,7 @@ interface CasePageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Recovery Case Tracker | E-Waste Value Recovery",
+  title: "Recovery Case Dossier | E-Waste Value Recovery",
   description: "Track and advance your active hardware recovery case with verified status milestones.",
 };
 
@@ -23,16 +23,16 @@ async function CaseDataLoader({ params }: CasePageProps) {
   if (!caseDetails) {
     return (
       <main className="flex-1 max-w-xl mx-auto px-4 py-20 text-center">
-        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
+        <div className="w-12 h-12 rounded-sm bg-[#F4F1EA] flex items-center justify-center mx-auto mb-4 text-[#8E8B82] border border-[#E5E0D8]">
           <Inbox className="w-6 h-6" />
         </div>
-        <h1 className="text-xl font-bold text-slate-900 mb-2">Recovery Case Not Found</h1>
-        <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+        <h1 className="font-serif text-2xl font-bold text-[#141413] mb-2">Recovery Docket Not Found</h1>
+        <p className="text-xs sm:text-sm text-[#5A574F] mb-6 leading-relaxed">
           Case ID &lsquo;{id}&rsquo; does not exist in our active recovery database. Check that the URL is correct or start a new assessment.
         </p>
         <Link
           href="/find-option"
-          className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-2"
+          className="px-4 py-2.5 bg-[#1B3B2B] hover:bg-[#132A1F] text-white rounded-sm text-xs font-mono uppercase tracking-wider font-semibold inline-flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" /> Start New Assessment
         </Link>
@@ -46,10 +46,10 @@ async function CaseDataLoader({ params }: CasePageProps) {
 function CaseDetailSkeleton() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-pulse space-y-6">
-      <div className="h-32 bg-slate-200 rounded-2xl w-full" />
+      <div className="h-32 bg-[#EAE6DD] rounded-sm w-full" />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-7 h-96 bg-slate-200 rounded-2xl" />
-        <div className="lg:col-span-5 h-96 bg-slate-200 rounded-2xl" />
+        <div className="lg:col-span-7 h-96 bg-[#EAE6DD] rounded-sm" />
+        <div className="lg:col-span-5 h-96 bg-[#EAE6DD] rounded-sm" />
       </div>
     </div>
   );
@@ -57,7 +57,7 @@ function CaseDetailSkeleton() {
 
 export default function CasePage({ params }: CasePageProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-[#F7F5EE] text-[#141413]">
       <Header />
       <main className="flex-1">
         <Suspense fallback={<CaseDetailSkeleton />}>

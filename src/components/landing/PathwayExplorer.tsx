@@ -3,15 +3,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { DEVICE_CATEGORIES } from "@/lib/constants/categories";
-import { PATHWAYS } from "@/lib/constants/pathways";
-import { Badge } from "../ui/Badge";
 import {
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  Flame,
-  XCircle,
-  ArrowRight,
+  ArrowUpRight,
+  Cpu,
+  ShieldAlert,
 } from "lucide-react";
 
 export type ConditionType =
@@ -33,27 +28,27 @@ export const CONDITIONS: ConditionOption[] = [
   {
     id: "working_recent",
     label: "Fully working, relatively recent (< 4-5 yrs)",
-    description: "Powers on normally, receives OS security updates, battery functional, no structural damage.",
+    description: "Powers on normally, receives OS security updates, battery healthy, no structural damage.",
   },
   {
     id: "minor_fault",
     label: "Minor fault or worn consumable",
-    description: "Cracked outer screen, degraded battery, stiff button, or minor mechanical issue.",
+    description: "Cracked outer screen glass, degraded battery capacity, sticky switch, or loose charge port.",
   },
   {
     id: "working_older",
     label: "Fully working, but older or unsupported",
-    description: "Operating system no longer receives security patches, slow for modern workloads, but powers on.",
+    description: "OS patches ceased, hardware operates slow for modern workloads, but powers on completely.",
   },
   {
     id: "major_fault",
     label: "Major hardware fault or won't boot",
-    description: "Failed motherboard, severe liquid ingress, shattered display panel, or unrepairable fault.",
+    description: "Failed logic board, liquid corrosion, shattered panel, or persistent bootloop.",
   },
   {
     id: "unsafe_hazardous",
-    label: "Physical swelling, cracked battery, or chemical hazard",
-    description: "Bulging pouch cell, leaking electrolyte, burnt electrical odor, or exposed high-voltage wiring.",
+    label: "Physical swelling, cracked battery, or chemical leak",
+    description: "Bulging pouch cell, leaking electrolyte, burnt odor, or exposed high-voltage wiring.",
   },
 ];
 
@@ -73,11 +68,11 @@ export function PathwayExplorer() {
   const [selectedCondition, setSelectedCondition] = useState<ConditionType>("minor_fault");
   const [priority, setPriority] = useState<PriorityType>("value");
 
-  const currentCategory = DEVICE_CATEGORIES.find((c) => c.id === selectedCategory) || DEVICE_CATEGORIES[0];
+  const currentCategory =
+    DEVICE_CATEGORIES.find((c) => c.id === selectedCategory) || DEVICE_CATEGORIES[0];
 
-  // Dynamically evaluate recommendation based on Category, Condition, and Priority
   const getRecommendation = (): RecommendationResult => {
-    // 1. SAFETY OVERRIDE: Swollen, damaged lithium, or severe chemical/electrical hazards
+    // 1. SAFETY OVERRIDE
     if (selectedCondition === "unsafe_hazardous") {
       const isLargeAppliance = selectedCategory === "home-appliances-large";
 
@@ -89,7 +84,7 @@ export function PathwayExplorer() {
         "Do NOT open, puncture, compress, or attempt to remove a swollen, leaking, or damaged battery cell.",
         "Place the unit in a well-ventilated, fire-safe location (such as an outdoor concrete surface or metal container) away from combustibles.",
         "Do not transport an actively hot, smoking, or leaking battery in a passenger vehicle or send it by standard mail/courier.",
-        "Contact your local municipal hazardous-waste collection team or fire/emergency services for safe on-site handling and disposal instructions."
+        "Contact your local municipal hazardous-waste collection team or fire/emergency services for safe on-site handling and disposal instructions.",
       ];
 
       if (isLargeAppliance) {
@@ -99,7 +94,7 @@ export function PathwayExplorer() {
         hazardSteps = [
           "Isolate appliance from mains electrical supply immediately.",
           "Do not cut or puncture cooling coils or compressor lines containing pressurized refrigerants.",
-          "Contact your local municipal bulky waste collection service or an authorised commercial appliance recycler."
+          "Contact your local municipal bulky waste collection service or an authorised commercial appliance recycler.",
         ];
       }
 
@@ -112,413 +107,243 @@ export function PathwayExplorer() {
         reason: hazardReason,
         actionItems: hazardSteps,
         disallowedNotice:
-          "Resale, retailer trade-in, and charitable donation are strictly prohibited for hazardous, swollen, or structurally dangerous electronics."
+          "Resale, retailer trade-in, and charitable donation are strictly prohibited for hazardous, swollen, or structurally dangerous electronics.",
       };
     }
 
-    // 2. MAJOR FAULT / DEAD HARDWARE
+    // 2. MAJOR FAULT
     if (selectedCondition === "major_fault") {
-      if (
-        selectedCategory === "smartphones-tablets" ||
-        selectedCategory === "laptops-computers" ||
-        selectedCategory === "gaming-entertainment"
-      ) {
+      if (selectedCategory === "smartphones-tablets" || selectedCategory === "laptops-computers") {
         return {
           isHazardous: false,
           primaryId: "refurbishers-parts",
           secondaryId: "authorised-recycling",
-          headline: `Salvage Donor Components for ${currentCategory.name}`,
-          categoryContext: `Modular salvage evaluation for ${currentCategory.name}`,
+          headline: "Salvage Functional Sub-Assemblies & Donor Parts",
+          categoryContext: `Recovery protocol for ${currentCategory.name}`,
           reason:
-            "While the system does not boot or has mainboard failure, intact sub-assemblies (such as OEM display glass, camera modules, chassis, and peripheral ports) can retain salvage value for repair workshops seeking donor parts.",
+            "While logic board or display failure makes consumer repair uneconomic, secondary refurbishers can harvest donor ICs, camera modules, structural housings, and heatsinks.",
           actionItems: [
-            "Ensure on-board data cannot be read, or confirm mainboard storage destruction prior to release.",
-            "Accurately disclose the nature of the fault (e.g. no boot, liquid exposure) to prevent return disputes.",
-            "If salvage offers do not justify postage and handling, pivot directly to an authorised e-waste recycler."
-          ]
-        };
-      } else if (selectedCategory === "home-appliances-large") {
-        return {
-          isHazardous: false,
-          primaryId: "authorised-recycling",
-          secondaryId: "refurbishers-parts",
-          headline: "Authorised White Goods Recycler / Scrap Recovery",
-          categoryContext: `Heavy appliance disposal for ${currentCategory.name}`,
-          reason:
-            "Major domestic appliances with seized compressors or burnt control boards are generally uneconomical for domestic shipping. Certified recyclers shred and recover scrap metals while legally capturing controlled refrigerants.",
-          actionItems: [
-            "Check if your replacement appliance supplier offers free haul-away of your broken unit upon delivery.",
-            "Ensure water and electrical connections are safely disconnected prior to collection.",
-            "Verify the collector operates under regional environmental waste licensing."
-          ]
-        };
-      } else {
-        // Small appliances, audio, cables
-        return {
-          isHazardous: false,
-          primaryId: "authorised-recycling",
-          secondaryId: null,
-          headline: `Authorised E-Waste Recycler (${currentCategory.name})`,
-          categoryContext: `Safe material reclamation for ${currentCategory.name}`,
-          reason:
-            "Non-functional small appliances, worn peripherals, and broken accessories rarely have a viable component salvage market. Delivering to an authorised small-electricals drop-off ensures copper, plastics, and precious metals are recovered.",
-          actionItems: [
-            "Locate your local municipal small-WEEE or designated electronics recycling drop-off bin.",
-            "Bundle detachable cables and power adapters with the main unit if available.",
-            "Do not place electricals in general curbside rubbish."
-          ]
+            "Verify storage media cannot be harvested without cryptographic wipe (perform motherboard removal if unencrypted).",
+            "Seek specialist refurbishment buyback rather than standard P2P consumer sales.",
+            "If no local parts buyer accepts the unit, transfer to certified e-waste recycler for precious metal refining.",
+          ],
         };
       }
+
+      return {
+        isHazardous: false,
+        primaryId: "authorised-recycling",
+        secondaryId: null,
+        headline: "Direct Certified Material Recycling",
+        categoryContext: `Recovery protocol for ${currentCategory.name}`,
+        reason:
+          "Dead non-computing appliances and peripherals have negligible donor component reuse value. Direct mechanical shredding and circuit board refining captures copper, gold, and engineering plastics safely.",
+        actionItems: [
+          "Check local municipal collection point or authorised recycler depot in Delhi NCR.",
+          "Never discard with general domestic municipal refuse.",
+        ],
+      };
     }
 
-    // 3. MINOR FAULT / CONSUMABLE WEAR
+    // 3. MINOR FAULT
     if (selectedCondition === "minor_fault") {
-      if (selectedCategory === "home-appliances-large") {
-        return {
-          isHazardous: false,
-          primaryId: "repair",
-          secondaryId: "exchange-voucher",
-          headline: "Professional Domestic Appliance Servicing",
-          categoryContext: `Targeted repair triage for ${currentCategory.name}`,
-          reason:
-            "Common appliance issues—such as worn washing machine carbon brushes, broken pump seals, or failed oven heating elements—are modular and significantly less expensive to repair than buying a replacement machine.",
-          actionItems: [
-            "Identify the exact model and serial code on the door frame or rear rating plate.",
-            "Obtain a written repair estimate covering parts and labor before proceeding.",
-            "Compare the estimate against the cost of a comparable replacement unit."
-          ]
-        };
-      }
-
-      if (selectedCategory === "batteries-cables-peripherals") {
-        return {
-          isHazardous: false,
-          primaryId: "authorised-recycling",
-          secondaryId: null,
-          headline: "Authorised Peripheral & Cable Recycling",
-          categoryContext: `Material recovery for ${currentCategory.name}`,
-          reason:
-            "Cables with broken sheaths or intermittent contact present electrical resistance and fire hazards. They should not be repaired with tape or sold, but recycled for clean copper scrap.",
-          actionItems: [
-            "Stop using frayed or damaged charging cables.",
-            "Drop off at a local electronics retail take-back point or recycling centre."
-          ]
-        };
-      }
-
       if (priority === "value") {
         return {
           isHazardous: false,
           primaryId: "repair",
           secondaryId: "sell-cash",
-          headline: `Targeted Component Repair for ${currentCategory.name}`,
-          categoryContext: `Utility retention triage for ${currentCategory.name}`,
+          headline: "Targeted Repair to Retain Prime Utility",
+          categoryContext: `Economic assessment for ${currentCategory.name}`,
           reason:
-            "Replacing an isolated worn part (such as a degraded battery or cracked outer glass) typically restores daily operational reliability at a fraction of replacement cost, preserving device utility for years or restoring resale grade.",
+            "Replacing a worn battery cell or cracked outer glass preserves up to 70% of device utility at a fraction of replacement cost.",
           actionItems: [
-            "Check parts availability and whether parts require proprietary calibration tools.",
-            "Compare the repair estimate against the fair second-hand market value of a working equivalent.",
-            "Ensure the device still receives active operating system security updates before investing in repair."
-          ]
-        };
-      } else if (priority === "convenience") {
-        return {
-          isHazardous: false,
-          primaryId: "exchange-voucher",
-          secondaryId: "refurbishers-parts",
-          headline: `Manufacturer / Retailer Trade-in with Flaw Disclosure`,
-          categoryContext: `Low-friction trade-in for ${currentCategory.name}`,
-          reason:
-            "If you prefer to avoid the time required for repair diagnostics, retailer and brand trade-in portals regularly accept devices with minor flaws under adjusted grading terms, providing guaranteed prepaid shipping.",
-          actionItems: [
-            "Disclose screen cracks or cosmetic wear accurately to avoid post-inspection valuation adjustments.",
-            "Deactivate all personal account locks (e.g. iCloud, Google FRP) before dispatch.",
-            "Photograph the unit's exact physical state immediately prior to packaging."
-          ]
-        };
-      } else {
-        // Priority: social
-        return {
-          isHazardous: false,
-          primaryId: "donate-reuse",
-          secondaryId: "repair",
-          headline: "Community Repair Cafe or Refurbishment Charity",
-          categoryContext: `Community reuse for ${currentCategory.name}`,
-          reason:
-            "Certain community initiatives and repair cafes welcome repairable equipment with minor issues to train volunteers or furnish low-income households with reconditioned technology.",
-          actionItems: [
-            "Confirm the charity has in-house technical capacity to service the specific fault.",
-            "Include original power supplies and chargers.",
-            "Never donate broken items to charities that lack explicit repair programs."
-          ]
+            "Request itemised quote separating genuine spare part cost from labour fees.",
+            "Compare repair expense against the device's secondary market resale value.",
+            "Backup personal data prior to handing unit to technician.",
+          ],
         };
       }
+
+      return {
+        isHazardous: false,
+        primaryId: "exchange-voucher",
+        secondaryId: "sell-cash",
+        headline: "Convenience Trade-in / Kiosk Handover",
+        categoryContext: `Turnaround evaluation for ${currentCategory.name}`,
+        reason:
+          "Avoid the friction and messaging overhead of private P2P selling by transferring through an OEM or retailer buyback desk accepting minor faults with instant diagnostic deduction.",
+        actionItems: [
+          "Confirm whether trade-in credit is liquid cash or store-locked voucher.",
+          "Perform factory reset and remove anti-theft cloud locks.",
+        ],
+      };
     }
 
-    // 4. WORKING BUT OLDER / OBSOLETE
+    // 4. OLDER WORKING
     if (selectedCondition === "working_older") {
-      if (selectedCategory === "batteries-cables-peripherals") {
-        return {
-          isHazardous: false,
-          primaryId: "authorised-recycling",
-          secondaryId: "donate-reuse",
-          headline: "Community Spare Bin or Metal Recycling",
-          categoryContext: `Resource triage for ${currentCategory.name}`,
-          reason:
-            "Older legacy cables (such as mini-USB, VGA, or proprietary connectors) have negligible standalone resale value. They are best pooled in community spare bins or recycled for copper recovery.",
-          actionItems: [
-            "Check whether local maker spaces or community tech labs need spare cables.",
-            "Recycle unneeded cables at municipal collection bins."
-          ]
-        };
-      }
-
       if (priority === "social") {
         return {
           isHazardous: false,
           primaryId: "donate-reuse",
           secondaryId: "sell-cash",
-          headline: `Donate ${currentCategory.name} for Digital Inclusion or Education`,
-          categoryContext: `Charitable donation for ${currentCategory.name}`,
+          headline: "Social & Educational Redeployment",
+          categoryContext: `Community utility for ${currentCategory.name}`,
           reason:
-            "Older functional computers, tablets, and monitors that feel sluggish for modern demanding tasks often run effectively under lightweight Linux distributions or ChromeOS Flex, providing essential access for students or community members.",
+            "Older hardware capable of web browsing, document editing, or basic playback provides high educational value to non-profit learning centres when paired with lightweight OS software.",
           actionItems: [
-            "Sanitise all personal storage thoroughly or perform an encrypted factory reset.",
-            "Provide the matching power brick and functional charging cables.",
-            "Contact the receiving organisation in advance to verify current acceptance criteria."
-          ]
-        };
-      } else if (priority === "convenience") {
-        return {
-          isHazardous: false,
-          primaryId: "exchange-voucher",
-          secondaryId: "authorised-recycling",
-          headline: `Retailer Takeback or Trade-in for ${currentCategory.name}`,
-          categoryContext: `Convenient handover for ${currentCategory.name}`,
-          reason:
-            "While older devices yield minimal cash, many retailers offer small incentive vouchers or free responsible take-back programs to divert legacy tech from landfill without marketplace listing effort.",
-          actionItems: [
-            "Check store trade-in promotions for promotional bonus credits on older models.",
-            "Remove all personal accounts and restore factory settings before handover."
-          ]
-        };
-      } else {
-        // Priority: value
-        return {
-          isHazardous: false,
-          primaryId: "sell-cash",
-          secondaryId: "donate-reuse",
-          headline: `Local Classifieds Sale (Budget / Enthusiast Market)`,
-          categoryContext: `Second-hand recovery for ${currentCategory.name}`,
-          reason:
-            "Older hardware often has demand from hobbyists, students, or home-lab enthusiasts looking for budget workstations, media servers, or backup appliances.",
-          actionItems: [
-            "List with honest photographs, battery performance notes, and OS version.",
-            "Perform a cryptographic storage sanitisation before handover.",
-            "Use secure local pickup or insured postal delivery."
-          ]
+            "Verify the recipient non-profit specifically requests this hardware category.",
+            "Include power adapters and peripheral cables.",
+            "Execute NIST SP 800-88 cryptographic drive wipe.",
+          ],
         };
       }
-    }
 
-    // 5. FULLY WORKING AND RECENT
-    if (selectedCategory === "batteries-cables-peripherals") {
       return {
         isHazardous: false,
         primaryId: "sell-cash",
         secondaryId: "donate-reuse",
-        headline: "Bundle for Sale or Keep as Reliable Backup",
-        categoryContext: `Peripheral management for ${currentCategory.name}`,
+        headline: "Secondary Market Budget Resale",
+        categoryContext: `Market valuation for ${currentCategory.name}`,
         reason:
-          "High-quality recent peripherals (such as mechanical keyboards, wireless mice, or USB-C hubs) sell best when bundled or listed on specialized classifieds. Standalone cables are best kept as reliable spares.",
+          "Working budget hardware has robust secondary demand among students, tinkerers, or secondary device users.",
         actionItems: [
-          "Clean and test peripheral functionality before listing.",
-          "Group matching cables or adapters into a single bundle to offset shipping costs."
-        ]
+          "List with transparent photos showing battery health and cosmetic marks.",
+          "Provide power accessories.",
+        ],
       };
     }
 
-    if (selectedCategory === "home-appliances-large") {
-      if (priority === "social") {
-        return {
-          isHazardous: false,
-          primaryId: "donate-reuse",
-          secondaryId: "sell-cash",
-          headline: "Donate to Local Housing or Community Furniture Charity",
-          categoryContext: `Social redistribution for ${currentCategory.name}`,
-          reason:
-            "Recent, working major appliances are in high demand at community furniture charities supporting re-homing initiatives, many of which provide free collection directly from your home.",
-          actionItems: [
-            "Ensure the appliance is thoroughly cleaned and emptied.",
-            "Check that the charity provides certified electrical safety testing upon collection."
-          ]
-        };
-      }
-
-      return {
-        isHazardous: false,
-        primaryId: "sell-cash",
-        secondaryId: "exchange-voucher",
-        headline: "Direct Local Sale (Buyer Collection)",
-        categoryContext: `Local transaction for ${currentCategory.name}`,
-        reason:
-          "Because major appliances require two-person handling, selling directly via local classifieds with buyer collection avoids expensive commercial freight while securing true market value.",
-        actionItems: [
-          "Demonstrate working operation to the buyer upon collection.",
-          "Disconnect safely from mains plumbing and electricity in advance."
-        ]
-      };
-    }
-
+    // 5. WORKING RECENT
     if (priority === "convenience") {
       return {
         isHazardous: false,
         primaryId: "exchange-voucher",
         secondaryId: "sell-cash",
-        headline: `Retailer or Brand Trade-in for ${currentCategory.name}`,
-        categoryContext: `Fast turnaround for ${currentCategory.name}`,
+        headline: "OEM Trade-In or Retail Buyback",
+        categoryContext: `Commercial valuation for ${currentCategory.name}`,
         reason:
-          "For minimum time investment, manufacturer and retailer trade-in programs provide immediate credit against replacement purchases, with prepaid postage and zero buyer negotiation.",
+          "Guaranteed instantaneous credit towards your next device without fielding consumer messages or dealing with courier returns.",
         actionItems: [
-          "Compare trade-in values across multiple authorized platforms before locking in.",
-          "Deactivate cloud accounts (e.g. iCloud, Google FRP) to prevent valuation rejections."
-        ]
-      };
-    } else if (priority === "social") {
-      return {
-        isHazardous: false,
-        primaryId: "donate-reuse",
-        secondaryId: "sell-cash",
-        headline: `Donate Recent ${currentCategory.name} to High-Impact Causes`,
-        categoryContext: `High-value donation for ${currentCategory.name}`,
-        reason:
-          "Donating modern, working electronics delivers substantial social utility to non-profits, refugee support initiatives, or educational programs without requiring repair budgets.",
-        actionItems: [
-          "Include all original accessories, chargers, and manuals if available.",
-          "Perform a factory reset with encryption enabled to protect your privacy."
-        ]
-      };
-    } else {
-      // Priority: value
-      return {
-        isHazardous: false,
-        primaryId: "sell-cash",
-        secondaryId: "exchange-voucher",
-        headline: `Direct Peer-to-Peer Resale for ${currentCategory.name}`,
-        categoryContext: `Maximum cash recovery for ${currentCategory.name}`,
-        reason:
-          "Selling directly to another consumer captures true second-hand market value without middleman deductions, though you are responsible for photography, shipping, and buyer communication.",
-        actionItems: [
-          "Completely decouple all manufacturer cloud accounts and locks.",
-          "Perform a secure factory reset with device encryption enabled.",
-          "Document serial numbers and record brief video proof of functionality before dispatch."
-        ]
+          "Verify OEM bonus exchange incentives during promotional windows.",
+          "Check trade-in terms for physical counter inspection deductions.",
+        ],
       };
     }
+
+    return {
+      isHazardous: false,
+      primaryId: "sell-cash",
+      secondaryId: "exchange-voucher",
+      headline: "Direct Peer-to-Peer Cash Resale",
+      categoryContext: `Maximum return valuation for ${currentCategory.name}`,
+      reason:
+        "Recent fully working electronics yield the absolute highest financial recovery through direct private sale, eliminating middleman refurbishment margins.",
+      actionItems: [
+        "Capture clean daylight photos of screen and frame.",
+        "Sign out of Apple ID / Google FRP / cloud accounts before factory reset.",
+        "Arrange hand-over in a secure, well-lit public space.",
+      ],
+    };
   };
 
-  const recommendation = getRecommendation();
-  const primaryPathway = PATHWAYS.find((p) => p.id === recommendation.primaryId);
-  const secondaryPathway = recommendation.secondaryId
-    ? PATHWAYS.find((p) => p.id === recommendation.secondaryId)
-    : null;
+  const rec = getRecommendation();
 
   return (
-    <section id="finder" className="py-16 lg:py-24 bg-white border-b border-slate-200 scroll-mt-20">
+    <section className="py-16 lg:py-24 bg-[#F7F5EE] border-b border-[#DFD9CD] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <Badge variant="emerald" className="mb-3">
-            Interactive Decision Engine
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
-            Find the Best Option for Your Specific Device
-          </h2>
-          <p className="text-slate-600 text-base sm:text-lg">
-            Select your device category, actual operating condition, and priority.
-            Our triage logic provides objective options and safety protocols without commercial bias.
+        {/* Section Heading */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[#DFD9CD] mb-12">
+          <div className="space-y-2 max-w-2xl">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#736F66] block">
+              INTERACTIVE DECISION ENGINE // PREVIEW
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#141413] tracking-tight">
+              Test how condition alters value.
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#413F3B] max-w-md leading-relaxed font-sans">
+            Adjust the equipment category and symptoms below to see how our deterministic logic
+            shifts recommendations between repair, resale, donor parts, and certified recycling.
           </p>
         </div>
 
-        {/* Interactive Matrix Grid */}
+        {/* Matrix Workbench Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Configuration Column (Inputs) */}
-          <div className="lg:col-span-5 space-y-6 bg-slate-50 p-6 sm:p-7 rounded-2xl border border-slate-200">
-            {/* Step 1: Category */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-900 mb-2.5">
-                1. Select Device Category
+          {/* Left Controls Column */}
+          <div className="lg:col-span-5 bg-[#FAF8F3] border border-[#D4CDC0] rounded-sm p-6 sm:p-7 shadow-xs space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E0D4] text-[11px] font-mono uppercase text-[#736F66]">
+              <span className="flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-[#1B3B2B]" />
+                <span>INPUT SPECIFICATION</span>
+              </span>
+              <span>LIVE PARAMETERS</span>
+            </div>
+
+            {/* 1. Category */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-mono uppercase text-[#141413] tracking-wider">
+                1. Equipment Category
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="group" aria-label="Device category selection">
-                {DEVICE_CATEGORIES.map((cat) => (
+              <div className="grid grid-cols-2 gap-1.5 font-mono text-xs">
+                {DEVICE_CATEGORIES.slice(0, 4).map((cat) => (
                   <button
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`text-left p-3 rounded-xl border text-xs font-medium transition-all ${
+                    className={`p-2.5 text-left border rounded-xs transition-colors ${
                       selectedCategory === cat.id
-                        ? "bg-emerald-800 text-white border-emerald-900 shadow-xs ring-2 ring-emerald-800/20"
-                        : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                        ? "bg-[#1B3B2B] text-[#F7F5EE] border-[#142D21]"
+                        : "bg-[#F7F5EE] text-[#413F3B] border-[#D4CDC0] hover:bg-[#EFECE2]"
                     }`}
-                    aria-pressed={selectedCategory === cat.id}
                   >
-                    <span className="block font-semibold">{cat.name}</span>
-                    <span
-                      className={`block text-[11px] mt-0.5 truncate ${
-                        selectedCategory === cat.id ? "text-emerald-100" : "text-slate-500"
-                      }`}
-                    >
-                      {cat.examples[0]}
-                    </span>
+                    <span className="block font-semibold truncate">{cat.name}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Step 2: Physical & Operational Condition */}
-            <fieldset>
-              <legend className="block text-sm font-semibold text-slate-900 mb-2.5">
-                2. Real Physical & Operating Condition
-              </legend>
-              <div className="space-y-2">
+            {/* 2. Condition */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-mono uppercase text-[#141413] tracking-wider">
+                2. Functional Condition
+              </label>
+              <div className="space-y-1.5">
                 {CONDITIONS.map((cond) => {
                   const isChecked = selectedCondition === cond.id;
-                  const isHazardOption = cond.id === "unsafe_hazardous";
+                  const isHazard = cond.id === "unsafe_hazardous";
 
                   return (
                     <label
                       key={cond.id}
-                      className={`flex items-start gap-3 p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                      className={`flex items-start gap-2.5 p-2.5 border rounded-xs cursor-pointer transition-colors text-xs ${
                         isChecked
-                          ? isHazardOption
-                            ? "bg-rose-50/80 border-rose-500 ring-2 ring-rose-500/20 text-slate-900 shadow-xs"
-                            : "bg-white border-emerald-600 ring-2 ring-emerald-600/20 text-slate-900 shadow-xs"
-                          : isHazardOption
-                          ? "bg-white border-rose-200/70 text-slate-700 hover:bg-rose-50/30"
-                          : "bg-white/80 border-slate-200 text-slate-700 hover:bg-white"
+                          ? isHazard
+                            ? "bg-[#FBECE6] border-[#F2C2B2] text-[#A63C19]"
+                            : "bg-[#1B3B2B] border-[#142D21] text-[#F7F5EE]"
+                          : isHazard
+                          ? "bg-[#FAF8F3] border-[#F2C2B2] text-[#A63C19] hover:bg-[#FBECE6]"
+                          : "bg-[#F7F5EE] border-[#D4CDC0] text-[#383632] hover:bg-[#EFECE2]"
                       }`}
                     >
                       <input
                         type="radio"
-                        name="operating-condition"
+                        name="preview-condition"
                         value={cond.id}
                         checked={isChecked}
                         onChange={() => setSelectedCondition(cond.id)}
-                        className={`mt-0.5 h-4 w-4 border-slate-300 ${
-                          isHazardOption
-                            ? "text-rose-600 focus:ring-rose-500"
-                            : "text-emerald-600 focus:ring-emerald-500"
-                        }`}
+                        className="mt-0.5"
                       />
-                      <div>
+                      <div className="space-y-0.5">
+                        <span className="block font-semibold leading-tight">{cond.label}</span>
                         <span
-                          className={`block font-semibold ${
-                            isHazardOption && isChecked ? "text-rose-950" : "text-slate-900"
+                          className={`block text-[11px] leading-tight ${
+                            isChecked
+                              ? isHazard
+                                ? "text-[#732B13]"
+                                : "text-[#C1DFDC]"
+                              : "text-[#736F66]"
                           }`}
                         >
-                          {cond.label}
-                        </span>
-                        <span className="block text-[11px] text-slate-500 mt-0.5 leading-snug">
                           {cond.description}
                         </span>
                       </div>
@@ -526,228 +351,128 @@ export function PathwayExplorer() {
                   );
                 })}
               </div>
-            </fieldset>
+            </div>
 
-            {/* Step 3: Priority */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-900 mb-2.5">
-                3. Primary Goal / Preference
+            {/* 3. Priority Goal */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-mono uppercase text-[#141413] tracking-wider">
+                3. User Priority
               </label>
-              <div className="grid grid-cols-3 gap-2" role="group" aria-label="User priority selection">
+              <div className="grid grid-cols-3 gap-1.5 font-mono text-[11px]">
                 <button
                   type="button"
                   onClick={() => setPriority("value")}
-                  className={`p-2.5 text-center rounded-xl border text-xs font-medium transition-all ${
+                  className={`p-2 border rounded-xs text-center transition-colors ${
                     priority === "value"
-                      ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                      ? "bg-[#1B3B2B] text-[#F7F5EE] border-[#142D21]"
+                      : "bg-[#F7F5EE] text-[#413F3B] border-[#D4CDC0] hover:bg-[#EFECE2]"
                   }`}
-                  aria-pressed={priority === "value"}
                 >
-                  <span className="block font-semibold">Max Payout</span>
-                  <span className="text-[10px] opacity-80">Highest return</span>
+                  MAX VALUE
                 </button>
                 <button
                   type="button"
                   onClick={() => setPriority("convenience")}
-                  className={`p-2.5 text-center rounded-xl border text-xs font-medium transition-all ${
+                  className={`p-2 border rounded-xs text-center transition-colors ${
                     priority === "convenience"
-                      ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                      ? "bg-[#1B3B2B] text-[#F7F5EE] border-[#142D21]"
+                      : "bg-[#F7F5EE] text-[#413F3B] border-[#D4CDC0] hover:bg-[#EFECE2]"
                   }`}
-                  aria-pressed={priority === "convenience"}
                 >
-                  <span className="block font-semibold">Fast / Easy</span>
-                  <span className="text-[10px] opacity-80">Minimal effort</span>
+                  SPEED / EFFORT
                 </button>
                 <button
                   type="button"
                   onClick={() => setPriority("social")}
-                  className={`p-2.5 text-center rounded-xl border text-xs font-medium transition-all ${
+                  className={`p-2 border rounded-xs text-center transition-colors ${
                     priority === "social"
-                      ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                      ? "bg-[#1B3B2B] text-[#F7F5EE] border-[#142D21]"
+                      : "bg-[#F7F5EE] text-[#413F3B] border-[#D4CDC0] hover:bg-[#EFECE2]"
                   }`}
-                  aria-pressed={priority === "social"}
                 >
-                  <span className="block font-semibold">Reuse / Charity</span>
-                  <span className="text-[10px] opacity-80">Community first</span>
+                  COMMUNITY
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right Results Column (Practical Analysis) */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Primary Recommendation Card */}
+          {/* Right Live Recommendation Output Column */}
+          <div className="lg:col-span-7 space-y-4">
             <div
-              className={`rounded-2xl p-6 sm:p-8 shadow-sm transition-all border-2 ${
-                recommendation.isHazardous
-                  ? "bg-rose-50/40 border-rose-600"
-                  : "bg-white border-emerald-600"
+              className={`border rounded-sm p-6 sm:p-8 space-y-5 transition-colors ${
+                rec.isHazardous
+                  ? "bg-[#FBECE6] border-[#C8532C] text-[#141413]"
+                  : "bg-[#FAF8F3] border-[#D4CDC0] text-[#141413]"
               }`}
             >
-              {/* Status Header */}
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                {recommendation.isHazardous ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-900 text-xs font-bold rounded-full uppercase tracking-wider border border-rose-300">
-                    <AlertTriangle className="w-4 h-4 text-rose-700 shrink-0" />
-                    Immediate Safety Risk &bull; Stop Use
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase tracking-wider border border-emerald-200">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                    Indicative Guidance
-                  </span>
-                )}
-
-                {primaryPathway && !recommendation.isHazardous && (
-                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <span>
-                      Effort: <strong className="text-slate-800">{primaryPathway.tradeoffs.effortRequired}</strong>
-                    </span>
-                    <span>&bull;</span>
-                    <span>
-                      Return: <strong className="text-slate-800">{primaryPathway.tradeoffs.financialReturn}</strong>
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Context Tag */}
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                {recommendation.categoryContext}
-              </span>
-
-              {/* Headline */}
-              <h3
-                className={`text-2xl font-bold tracking-tight mb-3 ${
-                  recommendation.isHazardous ? "text-rose-950" : "text-slate-900"
-                }`}
-              >
-                {recommendation.headline}
-              </h3>
-
-              {/* Reason Explanation */}
-              <p className="text-sm text-slate-700 leading-relaxed mb-6">
-                {recommendation.reason}
-              </p>
-
-              {/* Action checklist */}
-              <div
-                className={`rounded-xl p-4 sm:p-5 border mb-6 ${
-                  recommendation.isHazardous
-                    ? "bg-white border-rose-200 text-rose-950"
-                    : "bg-slate-50 border-slate-200 text-slate-700"
-                }`}
-              >
-                <h4
-                  className={`text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5 ${
-                    recommendation.isHazardous ? "text-rose-900" : "text-slate-800"
+              {/* Header Stamp */}
+              <div className="flex items-center justify-between pb-4 border-b border-[#DFD9CD] text-[11px] font-mono uppercase">
+                <span className="flex items-center gap-2">
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      rec.isHazardous ? "bg-[#C8532C] animate-ping" : "bg-[#1B3B2B]"
+                    }`}
+                  />
+                  <span className="text-[#736F66]">{rec.categoryContext}</span>
+                </span>
+                <span
+                  className={`px-2 py-0.5 rounded-xs font-bold ${
+                    rec.isHazardous
+                      ? "bg-[#C8532C] text-white"
+                      : "bg-[#1B3B2B] text-[#F7F5EE]"
                   }`}
                 >
-                  {recommendation.isHazardous ? (
-                    <Flame className="w-4 h-4 text-rose-700" />
-                  ) : (
-                    <Info className="w-4 h-4 text-emerald-700" />
-                  )}
-                  {recommendation.isHazardous
-                    ? "Mandatory Safe Handling Checklist:"
-                    : "Practical Prerequisites & Verification Steps:"}
-                </h4>
-                <ul className="space-y-2 text-xs">
-                  {recommendation.actionItems.map((item, idx) => (
+                  {rec.isHazardous ? "SAFETY DIRECTIVE" : "RECOMMENDED PRIMARY"}
+                </span>
+              </div>
+
+              {/* Title & Core Reason */}
+              <div className="space-y-2">
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#141413]">
+                  {rec.headline}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#413F3B] leading-relaxed font-sans">
+                  {rec.reason}
+                </p>
+              </div>
+
+              {/* Action Protocol Checklist */}
+              <div className="space-y-2 pt-2 border-t border-[#DFD9CD]">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#736F66] block">
+                  Prescribed Actions:
+                </span>
+                <ul className="space-y-1.5 text-xs text-[#383632] font-mono">
+                  {rec.actionItems.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2">
-                      <span
-                        className={`w-4 h-4 rounded-full font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5 ${
-                          recommendation.isHazardous
-                            ? "bg-rose-700 text-white"
-                            : "bg-emerald-700 text-white"
-                        }`}
-                      >
-                        {idx + 1}
-                      </span>
-                      <span className="leading-snug">{item}</span>
+                      <span className="text-[#1B3B2B] font-bold">&rarr;</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Explicit prohibition banner for hazards */}
-              {recommendation.disallowedNotice && (
-                <div className="bg-rose-100/70 border border-rose-300 rounded-xl p-3.5 mb-5 flex items-start gap-2.5 text-xs text-rose-900">
-                  <XCircle className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
-                  <span className="font-medium leading-snug">{recommendation.disallowedNotice}</span>
+              {/* Disallowed warning if hazardous */}
+              {rec.disallowedNotice && (
+                <div className="p-3 bg-white/80 border border-[#F2C2B2] text-[#A63C19] text-xs font-mono rounded-xs flex items-start gap-2">
+                  <ShieldAlert className="w-4 h-4 text-[#C8532C] shrink-0 mt-0.5" />
+                  <span>{rec.disallowedNotice}</span>
                 </div>
               )}
 
-              {/* Footer info & pathway link */}
-              {primaryPathway && (
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-t border-slate-100 text-xs text-slate-500">
-                  <span>
-                    Typical turnaround: <strong>{primaryPathway.tradeoffs.speed}</strong>
-                  </span>
-                  <a
-                    href={`/#pathway-${primaryPathway.id}`}
-                    className="inline-flex items-center justify-center font-semibold text-emerald-800 hover:text-emerald-900 hover:underline"
-                  >
-                    View pathway trade-off specifications &rarr;
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {/* Secondary Alternative Card if applicable */}
-            {secondaryPathway && !recommendation.isHazardous && (
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Comparative Alternative Option
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    Return: <strong className="text-slate-800">{secondaryPathway.tradeoffs.financialReturn}</strong>
-                  </span>
-                </div>
-                <h4 className="text-lg font-bold text-slate-900 mb-1">
-                  {secondaryPathway.title}
-                </h4>
-                <p className="text-xs text-slate-600 mb-3 leading-relaxed">
-                  {secondaryPathway.shortDescription}
-                </p>
-                <a
-                  href={`/#pathway-${secondaryPathway.id}`}
-                  className="text-xs font-semibold text-slate-800 hover:text-emerald-700 inline-flex items-center gap-1"
-                >
-                  Review trade-offs for {secondaryPathway.title} &rarr;
-                </a>
-              </div>
-            )}
-
-            {/* Bridge to Full Recovery Comparison Engine */}
-            <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-sm border border-emerald-800">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <h4 className="text-base font-bold text-white mb-1">
-                    Need verified provider matching in your area?
-                  </h4>
-                  <p className="text-xs text-emerald-200 leading-relaxed max-w-xl">
-                    Run our full comparison engine with exact pincode verification, quote types, pickup/drop-off logistics, and documented evidence sources.
-                  </p>
-                </div>
+              {/* Launch Full Assessment Link */}
+              <div className="pt-4 flex items-center justify-between border-t border-[#DFD9CD]">
+                <span className="text-[11px] font-mono text-[#736F66]">
+                  LOOKING FOR DELHI PROVIDERS?
+                </span>
                 <Link
                   href="/find-option"
-                  className="shrink-0 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
                 >
-                  <span>Compare with Providers</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Run Full Evaluation</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
                 </Link>
               </div>
             </div>
-
-            {/* Disclaimer on advice nature */}
-            <p className="text-[11px] text-slate-500 leading-normal px-2">
-              <strong>Advisory Note:</strong> This assessment provides indicative decision guidance derived from hardware condition, security requirements, and regulatory safety standards. It does not constitute a guaranteed commercial quote, provider reservation, or local facility match.
-            </p>
           </div>
         </div>
       </div>

@@ -194,27 +194,27 @@ export function AdminConsole({
   if (!isAuthenticated) {
     return (
       <div className="max-w-md mx-auto px-4 py-20">
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
-          <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto">
-            <Lock className="w-6 h-6" />
+        <div className="bg-white border border-[#E5E0D8] rounded-sm p-8 shadow-xs space-y-6">
+          <div className="w-12 h-12 rounded-sm bg-[#141413] text-[#F7F5EE] flex items-center justify-center mx-auto border border-[#2D2C28]">
+            <Lock className="w-5 h-5 text-[#A3D9B1]" />
           </div>
 
           <div className="text-center">
-            <h1 className="text-xl font-bold text-slate-900">Operations Console Access</h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Enter your privileged administrator key to manage provider candidates and verify recovery records.
+            <h1 className="font-serif text-2xl font-bold text-[#141413]">Operations Console Access</h1>
+            <p className="text-xs text-[#5A574F] mt-1.5 leading-relaxed font-sans">
+              Enter privileged administrator key to manage provider candidates and verify recovery records.
             </p>
           </div>
 
           {authError && (
-            <div className="bg-rose-50 border border-rose-300 text-rose-900 text-xs p-3.5 rounded-xl">
+            <div className="bg-[#FFF9F5] border border-[#F3D1C2] text-[#C8532C] text-xs p-3.5 rounded-sm font-mono">
               {authError}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F] mb-1.5">
                 Administrator API Key
               </label>
               <input
@@ -222,11 +222,11 @@ export function AdminConsole({
                 value={adminKeyInput}
                 onChange={(e) => setAdminKeyInput(e.target.value)}
                 placeholder="Enter ADMIN_API_KEY..."
-                className="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                className="w-full text-xs font-mono bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-3 text-[#141413] focus:outline-none focus:border-[#1B3B2B] focus:ring-1 focus:ring-[#1B3B2B]"
                 required
               />
               {process.env.NODE_ENV !== "production" && (
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] font-mono text-[#8E8B82] mt-1.5">
                   Development fallback key: <code>ewaste-admin-secret-dev-2026</code>
                 </p>
               )}
@@ -234,7 +234,7 @@ export function AdminConsole({
 
             <button
               type="submit"
-              className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors shadow-xs"
+              className="w-full py-3 bg-[#1B3B2B] hover:bg-[#132A1F] text-white text-xs font-mono uppercase tracking-wider font-semibold rounded-sm transition-colors shadow-xs"
             >
               Authenticate Operations Console
             </button>
@@ -248,29 +248,29 @@ export function AdminConsole({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Top Header */}
-      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-[#141413] text-[#F7F5EE] rounded-sm p-6 sm:p-8 border border-[#2D2C28] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center gap-1.5">
+          <div className="flex items-center gap-2 mb-2 font-mono text-[11px] uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-sm bg-[#1B3B2B] text-[#A3D9B1] border border-[#2C5E45] flex items-center gap-1.5">
               <ShieldAlert className="w-3.5 h-3.5" /> Operations Console
             </span>
-            <span className="text-xs text-slate-400">&bull;</span>
-            <span className="text-xs text-slate-400">Authenticated as Editorial Admin</span>
+            <span className="text-[#8E8B82]">&bull;</span>
+            <span className="text-[#BDB9AE]">Authenticated as Editorial Admin</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            Provider Verification & Operational Audit
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#F7F5EE]">
+            Provider Verification &amp; Operational Audit
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#BDB9AE] mt-1 max-w-2xl leading-relaxed">
             Audit unverified provider candidates, review customer recovery evidence, confirm certified recycling receipts, and inspect immutable change logs.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 font-mono text-xs">
           <Link
             href="/analytics"
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition-colors"
+            className="px-4 py-2.5 bg-[#20201E] hover:bg-[#2A2926] text-[#D8D4C8] rounded-sm border border-[#35332F] transition-colors"
           >
-            Analytics & Impact
+            Analytics &amp; Impact
           </Link>
           <button
             type="button"
@@ -278,7 +278,7 @@ export function AdminConsole({
               document.cookie = "admin_token=; path=/; max-age=0";
               setIsAuthenticated(false);
             }}
-            className="px-4 py-2.5 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded-xl text-xs font-semibold transition-colors"
+            className="px-4 py-2.5 bg-[#FFF9F5] hover:bg-[#FFF0E8] text-[#C8532C] border border-[#F3D1C2] rounded-sm font-semibold uppercase tracking-wider transition-colors"
           >
             Sign Out
           </button>
@@ -288,30 +288,30 @@ export function AdminConsole({
       {/* Notifications */}
       {operationMsg && (
         <div
-          className={`p-4 rounded-xl text-xs flex items-start gap-2.5 border ${
+          className={`p-4 rounded-sm text-xs flex items-start gap-2.5 border font-mono ${
             operationMsg.type === "success"
-              ? "bg-emerald-50 border-emerald-300 text-emerald-900"
-              : "bg-rose-50 border-rose-300 text-rose-900"
+              ? "bg-[#EDF5F0] border-[#C6DFD0] text-[#1B3B2B]"
+              : "bg-[#FFF9F5] border-[#F3D1C2] text-[#C8532C]"
           }`}
         >
           {operationMsg.type === "success" ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-[#1B3B2B] shrink-0 mt-0.5" />
           ) : (
-            <AlertCircle className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-[#C8532C] shrink-0 mt-0.5" />
           )}
           <span>{operationMsg.text}</span>
         </div>
       )}
 
       {/* Navigation Subtabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 border-b border-[#E5E0D8] pb-3 font-mono text-xs">
         <button
           type="button"
           onClick={() => setActiveTab("candidates")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-colors ${
+          className={`px-4 py-2 font-bold uppercase tracking-wider rounded-sm transition-colors ${
             activeTab === "candidates"
-              ? "bg-slate-900 text-white shadow-xs"
-              : "bg-slate-100 text-slate-600 hover:text-slate-900"
+              ? "bg-[#141413] text-[#F7F5EE] shadow-xs"
+              : "bg-white text-[#5A574F] hover:text-[#141413] border border-[#E5E0D8]"
           }`}
         >
           Candidate Providers ({providers.length})
@@ -319,10 +319,10 @@ export function AdminConsole({
         <button
           type="button"
           onClick={() => setActiveTab("cases")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-colors ${
+          className={`px-4 py-2 font-bold uppercase tracking-wider rounded-sm transition-colors ${
             activeTab === "cases"
-              ? "bg-slate-900 text-white shadow-xs"
-              : "bg-slate-100 text-slate-600 hover:text-slate-900"
+              ? "bg-[#141413] text-[#F7F5EE] shadow-xs"
+              : "bg-white text-[#5A574F] hover:text-[#141413] border border-[#E5E0D8]"
           }`}
         >
           Operational Cases ({cases.length})
@@ -330,10 +330,10 @@ export function AdminConsole({
         <button
           type="button"
           onClick={() => setActiveTab("audit")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-colors ${
+          className={`px-4 py-2 font-bold uppercase tracking-wider rounded-sm transition-colors ${
             activeTab === "audit"
-              ? "bg-slate-900 text-white shadow-xs"
-              : "bg-slate-100 text-slate-600 hover:text-slate-900"
+              ? "bg-[#141413] text-[#F7F5EE] shadow-xs"
+              : "bg-white text-[#5A574F] hover:text-[#141413] border border-[#E5E0D8]"
           }`}
         >
           Audit History ({auditLogs.length})
@@ -343,16 +343,16 @@ export function AdminConsole({
       {/* TAB 1: PROVIDER CANDIDATE VERIFICATION */}
       {activeTab === "candidates" && (
         <div className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 font-mono">
             <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Candidate Review & Verification Queue
+              <h2 className="font-serif text-lg font-bold text-[#141413]">
+                Candidate Review &amp; Verification Queue
               </h2>
-              <p className="text-xs text-slate-500">
-                Pending candidates are strictly quarantined from public consumer recommendations until verified with supporting documentary evidence.
+              <p className="text-xs text-[#5A574F] font-sans">
+                Pending candidates are quarantined from public recommendations until verified with supporting documentary evidence.
               </p>
             </div>
-            <span className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-lg">
+            <span className="text-xs text-[#5A574F] bg-[#FAF9F5] px-3 py-1 rounded-sm border border-[#E5E0D8]">
               {providers.filter((p) => p.approval_status === "approved").length} Approved &bull;{" "}
               {providers.filter((p) => p.approval_status === "pending_review").length} In Review
             </span>
@@ -366,58 +366,58 @@ export function AdminConsole({
               return (
                 <div
                   key={p.id}
-                  className={`bg-white rounded-2xl border p-6 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6 transition-all ${
-                    isApproved ? "border-emerald-300" : isRejected ? "border-rose-300 opacity-80" : "border-amber-300"
+                  className={`bg-white rounded-sm border p-6 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6 transition-all ${
+                    isApproved ? "border-[#C6DFD0]" : isRejected ? "border-[#F3D1C2] opacity-80" : "border-[#E8DCBF]"
                   }`}
                 >
                   <div className="space-y-3 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
+                    <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="bg-[#FAF9F5] text-[#5A574F] px-2 py-0.5 rounded-sm border border-[#E5E0D8]">
                         {p.organisation_type.replace(/_/g, " ")}
                       </span>
                       <span
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                        className={`px-2 py-0.5 rounded-sm font-bold ${
                           isApproved
-                            ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                            ? "bg-[#EDF5F0] text-[#1B3B2B] border border-[#C6DFD0]"
                             : isRejected
-                            ? "bg-rose-100 text-rose-900 border border-rose-300"
-                            : "bg-amber-100 text-amber-900 border border-amber-300"
+                            ? "bg-[#FFF9F5] text-[#C8532C] border border-[#F3D1C2]"
+                            : "bg-[#FAF5EB] text-[#6A4E23] border border-[#E8DCBF]"
                         }`}
                       >
                         Approval: {p.approval_status.replace(/_/g, " ")}
                       </span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                      <span className="bg-[#FAF9F5] text-[#5A574F] px-2 py-0.5 rounded-sm border border-[#E5E0D8]">
                         Tier: {p.verification_status.replace(/_/g, " ")}
                       </span>
                       {p.is_sample_data && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded">
+                        <span className="bg-[#FFF9F5] text-[#C8532C] border border-[#F3D1C2] px-2 py-0.5 rounded-sm">
                           Demo Fixture
                         </span>
                       )}
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
-                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                      <h3 className="font-serif text-xl font-bold text-[#141413]">{p.name}</h3>
+                      <p className="text-xs text-[#5A574F] mt-1 leading-relaxed">
                         {p.description || "No public description recorded."}
                       </p>
                     </div>
 
                     {/* Evidence & Location Details */}
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-2">
-                      <div className="flex flex-wrap gap-4 text-slate-700">
+                    <div className="bg-[#FAF9F5] p-4 rounded-sm border border-[#E5E0D8] text-xs space-y-2 font-mono">
+                      <div className="flex flex-wrap gap-4 text-[#5A574F]">
                         <span>
-                          <strong>Documented Locations:</strong> {p.service_areas.length} verified area(s)
+                          <strong className="text-[#141413]">Documented Locations:</strong> {p.service_areas.length} verified area(s)
                         </span>
                         <span>
-                          <strong>Pickup:</strong> {p.offers_pickup ? "Supported" : "No"} &bull;{" "}
-                          <strong>Drop-off:</strong> {p.offers_dropoff ? "Supported" : "No"}
+                          <strong className="text-[#141413]">Pickup:</strong> {p.offers_pickup ? "Supported" : "No"} &bull;{" "}
+                          <strong className="text-[#141413]">Drop-off:</strong> {p.offers_dropoff ? "Supported" : "No"}
                         </span>
                       </div>
 
                       {p.evidence_notes && (
-                        <p className="text-[11px] text-slate-600 italic">
-                          <strong>Audit Notes:</strong> {p.evidence_notes}
+                        <p className="text-[11px] text-[#5A574F] italic">
+                          <strong className="text-[#141413]">Audit Notes:</strong> {p.evidence_notes}
                         </p>
                       )}
 
@@ -426,7 +426,7 @@ export function AdminConsole({
                           href={p.source_evidence_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 underline"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#1B3B2B] hover:text-[#132A1F] underline"
                         >
                           <span>Primary Evidence Registry Source</span>
                           <ExternalLink className="w-3 h-3" />
@@ -436,8 +436,8 @@ export function AdminConsole({
                   </div>
 
                   {/* Actions Column */}
-                  <div className="md:w-64 shrink-0 space-y-2 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-slate-100 md:pl-6 flex flex-col justify-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <div className="md:w-64 shrink-0 space-y-2 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-[#E5E0D8] md:pl-6 flex flex-col justify-center font-mono text-xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8E8B82] block mb-1">
                       Editorial Actions:
                     </span>
 
@@ -446,9 +446,9 @@ export function AdminConsole({
                         type="button"
                         disabled={isProcessing}
                         onClick={() => handleUpdateProviderStatus(p.id, "approved", "verified")}
-                        className="w-full py-2 px-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                        className="w-full py-2 px-3 bg-[#1B3B2B] hover:bg-[#132A1F] text-white rounded-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 uppercase tracking-wider"
                       >
-                        <Check className="w-3.5 h-3.5" /> Approve Listing (Verified)
+                        <Check className="w-3.5 h-3.5" /> Approve (Verified)
                       </button>
                     )}
 
@@ -457,9 +457,9 @@ export function AdminConsole({
                         type="button"
                         disabled={isProcessing}
                         onClick={() => handleUpdateProviderStatus(p.id, "approved", "partially_verified")}
-                        className="w-full py-2 px-3 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                        className="w-full py-2 px-3 bg-[#6A4E23] hover:bg-[#523C1B] text-white rounded-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 uppercase tracking-wider"
                       >
-                        <Check className="w-3.5 h-3.5" /> Approve (Partially Verified)
+                        <Check className="w-3.5 h-3.5" /> Approve (Partially)
                       </button>
                     )}
 
@@ -468,9 +468,9 @@ export function AdminConsole({
                         type="button"
                         disabled={isProcessing}
                         onClick={() => handleUpdateProviderStatus(p.id, "rejected", "unverified")}
-                        className="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                        className="w-full py-2 px-3 bg-[#FFF9F5] hover:bg-[#FFF0E8] text-[#C8532C] border border-[#F3D1C2] rounded-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 uppercase tracking-wider"
                       >
-                        <XCircle className="w-3.5 h-3.5" /> Reject Candidate
+                        <XCircle className="w-3.5 h-3.5 text-[#C8532C]" /> Reject Candidate
                       </button>
                     )}
 
@@ -479,7 +479,7 @@ export function AdminConsole({
                         type="button"
                         disabled={isProcessing}
                         onClick={() => handleUpdateProviderStatus(p.id, "pending_review", p.verification_status)}
-                        className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="w-full py-2 px-3 bg-[#FAF9F5] hover:bg-[#F4F1EA] text-[#5A574F] border border-[#E5E0D8] rounded-sm text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors uppercase tracking-wider"
                       >
                         <RotateCcw className="w-3.5 h-3.5" /> Return to Review
                       </button>
@@ -495,24 +495,24 @@ export function AdminConsole({
       {/* TAB 2: OPERATIONAL CASE MONITORING */}
       {activeTab === "cases" && (
         <div className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 font-mono">
             <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Active Recovery Cases & Outcome Verifications
+              <h2 className="font-serif text-lg font-bold text-[#141413]">
+                Active Recovery Cases &amp; Outcome Verifications
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[#5A574F] font-sans">
                 Review user-reported cases, audit evidence notes, and elevate completed handovers to accredited &lsquo;Provider Verified&rsquo; status.
               </p>
             </div>
-            <span className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-lg">
+            <span className="text-xs text-[#5A574F] bg-[#FAF9F5] px-3 py-1 rounded-sm border border-[#E5E0D8]">
               Total: {cases.length} &bull; Verified: {cases.filter((c) => c.is_provider_verified).length}
             </span>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+          <div className="bg-white border border-[#E5E0D8] rounded-sm overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-[#FAF9F5] border-b border-[#E5E0D8] text-[#5A574F] font-bold uppercase tracking-wider text-[10px]">
                   <tr>
                     <th className="p-4">Case ID &amp; Device</th>
                     <th className="p-4">Pathway</th>
@@ -522,34 +522,34 @@ export function AdminConsole({
                     <th className="p-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E5E0D8]">
                   {cases.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="p-4 font-medium text-slate-900">
-                        <span className="block font-bold">{c.assessment?.device_model || "Hardware Item"}</span>
-                        <span className="text-[11px] text-slate-400 font-mono">#{c.id.slice(0, 14)}...</span>
+                    <tr key={c.id} className="hover:bg-[#FAF9F5]/70 transition-colors">
+                      <td className="p-4 text-[#141413]">
+                        <span className="block font-serif font-bold text-sm">{c.assessment?.device_model || "Hardware Item"}</span>
+                        <span className="text-[11px] text-[#8E8B82]">#{c.id.slice(0, 14)}...</span>
                       </td>
                       <td className="p-4">
-                        <span className="uppercase font-semibold text-[11px] text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                        <span className="uppercase font-semibold text-[11px] text-[#5A574F] bg-[#FAF9F5] px-2 py-0.5 rounded-sm border border-[#E5E0D8]">
                           {c.pathway_id}
                         </span>
                       </td>
-                      <td className="p-4 text-slate-700">
-                        {c.provider?.name || <em className="text-slate-400">Independent</em>}
+                      <td className="p-4 text-[#5A574F]">
+                        {c.provider?.name || <em className="text-[#8E8B82]">Independent</em>}
                       </td>
                       <td className="p-4">
-                        <span className="font-semibold text-slate-800 capitalize">
+                        <span className="font-semibold text-[#141413] capitalize">
                           {c.current_status.replace(/_/g, " ")}
                         </span>
                       </td>
                       <td className="p-4">
                         {c.is_provider_verified ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                            <ShieldCheck className="w-3 h-3 text-emerald-700" />
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1B3B2B] bg-[#EDF5F0] px-2 py-0.5 rounded-sm border border-[#C6DFD0]">
+                            <ShieldCheck className="w-3 h-3 text-[#1B3B2B]" />
                             Provider Verified
                           </span>
                         ) : (
-                          <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                          <span className="text-[11px] text-[#8E8B82] bg-[#FAF9F5] px-2 py-0.5 rounded-sm border border-[#E5E0D8]">
                             User Reported
                           </span>
                         )}
@@ -558,7 +558,7 @@ export function AdminConsole({
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/cases/${c.id}`}
-                            className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-1.5 text-[#5A574F] hover:text-[#141413] hover:bg-[#FAF9F5] rounded-sm transition-colors"
                             title="Inspect Case"
                           >
                             <Eye className="w-4 h-4" />
@@ -571,7 +571,7 @@ export function AdminConsole({
                                 setSelectedCaseForVerify(c);
                                 setVerifyNotes("");
                               }}
-                              className="px-2.5 py-1 bg-emerald-800 hover:bg-emerald-900 text-white font-semibold rounded text-[11px] transition-colors"
+                              className="px-2.5 py-1 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-semibold rounded-sm text-[11px] uppercase tracking-wider transition-colors"
                             >
                               Verify Outcome
                             </button>
@@ -587,29 +587,29 @@ export function AdminConsole({
 
           {/* Modal for verifying case outcome */}
           {selectedCaseForVerify && (
-            <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-xl space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-emerald-700" />
+            <div className="fixed inset-0 bg-[#141413]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+              <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 max-w-lg w-full shadow-xl space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E5E0D8]">
+                  <h3 className="font-serif text-lg font-bold text-[#141413] flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#1B3B2B]" />
                     Verify Recovery Outcome
                   </h3>
                   <button
                     type="button"
                     onClick={() => setSelectedCaseForVerify(null)}
-                    className="text-slate-400 hover:text-slate-700"
+                    className="text-[#8E8B82] hover:text-[#141413] text-lg font-mono"
                   >
                     &times;
                   </button>
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-[#5A574F] leading-relaxed">
                   Elevating case #{selectedCaseForVerify.id} to <strong>Provider-Verified</strong> certifies that an authorised manifest, counter receipt, or recycling destruction certificate was confirmed.
                 </p>
 
-                <form onSubmit={handleVerifyCaseOutcome} className="space-y-4">
+                <form onSubmit={handleVerifyCaseOutcome} className="space-y-4 font-mono text-xs">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1.5">
                       Auditor Verification Notes:
                     </label>
                     <textarea
@@ -617,7 +617,7 @@ export function AdminConsole({
                       value={verifyNotes}
                       onChange={(e) => setVerifyNotes(e.target.value)}
                       placeholder="e.g. Verified against CPCB e-waste consignment note #DEL-2026-8192; receipt validated with Apex recycling weigh-in."
-                      className="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800"
+                      className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-3 text-[#141413] focus:outline-none focus:border-[#1B3B2B] focus:ring-1 focus:ring-[#1B3B2B]"
                       required
                     />
                   </div>
@@ -626,14 +626,14 @@ export function AdminConsole({
                     <button
                       type="button"
                       onClick={() => setSelectedCaseForVerify(null)}
-                      className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800"
+                      className="px-4 py-2 text-xs text-[#5A574F] hover:text-[#141413]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isProcessing}
-                      className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white font-semibold rounded-xl text-xs transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-semibold rounded-sm text-xs uppercase tracking-wider transition-colors disabled:opacity-50"
                     >
                       Confirm Verification
                     </button>
@@ -648,43 +648,43 @@ export function AdminConsole({
       {/* TAB 3: ADMIN AUDIT LOGS */}
       {activeTab === "audit" && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between font-mono">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Immutable Administrative Audit Log</h2>
-              <p className="text-xs text-slate-500">
+              <h2 className="font-serif text-lg font-bold text-[#141413]">Immutable Administrative Audit Log</h2>
+              <p className="text-xs text-[#5A574F] font-sans">
                 Sequential chronological record of all administrative decisions, provider status updates, and outcome verifications.
               </p>
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+          <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 shadow-xs space-y-4 font-mono">
             {auditLogs.length > 0 ? (
               <div className="space-y-3">
                 {auditLogs.map((log) => (
                   <div
                     key={log.id}
-                    className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    className="p-3.5 bg-[#FAF9F5] rounded-sm border border-[#E5E0D8] text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <strong className="text-slate-900 uppercase font-mono text-[11px]">
+                        <strong className="text-[#141413] uppercase text-[11px]">
                           {log.action_type.replace(/_/g, " ")}
                         </strong>
-                        <span className="text-slate-400">&bull;</span>
-                        <span className="text-slate-600">Target: {log.target_entity_type} ({log.target_entity_id})</span>
+                        <span className="text-[#8E8B82]">&bull;</span>
+                        <span className="text-[#5A574F]">Target: {log.target_entity_type} ({log.target_entity_id})</span>
                       </div>
-                      <span className="text-[11px] text-slate-500 block">
+                      <span className="text-[11px] text-[#8E8B82] block">
                         Admin: {log.admin_identifier} &bull; Details: {JSON.stringify(log.details)}
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                    <span className="text-[10px] text-[#8E8B82] shrink-0">
                       {new Date(log.created_at).toLocaleString()}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-slate-500 italic text-center py-6">
+              <p className="text-xs text-[#8E8B82] italic text-center py-6">
                 No administrative actions recorded yet.
               </p>
             )}

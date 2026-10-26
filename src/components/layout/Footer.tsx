@@ -1,143 +1,148 @@
 import React from "react";
 import Link from "next/link";
-import { Layers, Shield, FileCheck, CheckCircle2 } from "lucide-react";
+import { Cpu, ShieldCheck, Scale, Leaf } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800">
+    <footer className="bg-[#1C1C1A] text-[#DFD9CD] pt-16 pb-12 border-t border-[#2B2B28]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
-          {/* Column 1: Mission & Brand */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
-                <Layers className="w-4 h-4 text-emerald-100" />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-[#2E2D2A]">
+          {/* Col 1: Institutional Statement & Wordmark */}
+          <div className="md:col-span-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-sm bg-[#257A72] text-[#F7F5EE] flex items-center justify-center font-bold">
+                <Cpu className="w-4 h-4 text-[#E9F3F2]" />
               </div>
-              <span className="font-bold text-white text-lg tracking-tight">
-                E-Waste Value Recovery
-              </span>
+              <div>
+                <span className="font-serif text-lg font-bold text-[#F7F5EE] tracking-tight block">
+                  E-Waste Value Recovery
+                </span>
+                <span className="font-mono text-[10px] text-[#A69E8C] tracking-wider uppercase block">
+                  Delhi NCR Circular Electronics Registry
+                </span>
+              </div>
             </div>
-            <p className="text-sm text-slate-400 max-w-lg leading-relaxed">
-              An independent, consumer-first platform dedicated to finding the highest practical
-              utility and monetary value for unwanted, faulty, or redundant electrical equipment.
-              Derived from hardware condition, objective trade-offs, and environmental safety standards.
+
+            <p className="text-xs text-[#A69E8C] leading-relaxed max-w-md font-sans">
+              An independent, evidence-backed evaluation service designed to determine the highest
+              practical utility, residual value, and safe disposal path for post-consumer hardware.
+              Rooted in material diagnostics, verified local logistics, and environmental safety directives.
             </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-800">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" /> Zero Sponsored Listings
+
+            <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono uppercase text-[#A69E8C]">
+              <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#282724] border border-[#3A3834] rounded-xs">
+                <ShieldCheck className="w-3 h-3 text-[#257A72]" /> Zero Sponsored Listings
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-800">
-                <FileCheck className="w-3.5 h-3.5 text-sky-400" /> Objective Sanitisation Guidance
+              <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#282724] border border-[#3A3834] rounded-xs">
+                <Scale className="w-3 h-3 text-[#C8532C]" /> Non-Inferential Pincode Matching
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Regulated Facility Standards
+              <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#282724] border border-[#3A3834] rounded-xs">
+                <Leaf className="w-3 h-3 text-[#257A72]" /> LCA Carbon Factor Accounting
               </span>
             </div>
           </div>
 
-          {/* Column 2: Recovery Pathways */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-white mb-4">
-              Value Pathways
+          {/* Col 2: The 6 Recovery Pathways */}
+          <div className="md:col-span-3 space-y-3">
+            <h4 className="text-[11px] font-mono uppercase tracking-widest text-[#F7F5EE] border-b border-[#2E2D2A] pb-2">
+              Recovery Pathways
             </h4>
-            <ul className="space-y-2 text-sm text-slate-400">
+            <ul className="space-y-2 text-xs font-mono text-[#A69E8C]">
               <li>
-                <Link href="/#pathway-repair" className="hover:text-white transition-colors">
-                  1. Repair & Continue Using
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">01</span> Repair &amp; Retain Utility
                 </Link>
               </li>
               <li>
-                <Link href="/#pathway-sell-cash" className="hover:text-white transition-colors">
-                  2. Sell for Cash (P2P)
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">02</span> Cash Buyback (P2P / Kiosk)
                 </Link>
               </li>
               <li>
-                <Link href="/#pathway-exchange-voucher" className="hover:text-white transition-colors">
-                  3. Retailer Trade-in / Voucher
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">03</span> Retailer Trade-in Voucher
                 </Link>
               </li>
               <li>
-                <Link href="/#pathway-refurbishers-parts" className="hover:text-white transition-colors">
-                  4. Refurbishers & Salvage
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">04</span> Component Salvage &amp; Donors
                 </Link>
               </li>
               <li>
-                <Link href="/#pathway-donate-reuse" className="hover:text-white transition-colors">
-                  5. Non-Profit Donation
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">05</span> Charitable Donation for Reuse
                 </Link>
               </li>
               <li>
-                <Link href="/#pathway-authorised-recycling" className="hover:text-white transition-colors">
-                  6. Certified E-Waste Recyclers
+                <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors flex items-center gap-2">
+                  <span className="text-[#736F66]">06</span> Certified Material Recycling
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: Transparency & Resources */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-white mb-4">
-              Consumer Guidance
+          {/* Col 3: Operational Registry */}
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-[11px] font-mono uppercase tracking-widest text-[#F7F5EE] border-b border-[#2E2D2A] pb-2">
+              Platform Registry
             </h4>
-            <ul className="space-y-2 text-sm text-slate-400">
+            <ul className="space-y-2 text-xs font-mono text-[#A69E8C]">
               <li>
-                <Link href="/directory" className="hover:text-white transition-colors font-medium text-emerald-400">
-                  Provider & Recycler Directory
+                <Link href="/directory" className="hover:text-[#F7F5EE] transition-colors">
+                  Provider Directory
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="hover:text-white transition-colors font-medium text-emerald-400">
-                  My Recovery Cases
+                <Link href="/dashboard" className="hover:text-[#F7F5EE] transition-colors">
+                  Case Dossier Tracker
                 </Link>
               </li>
               <li>
-                <Link href="/analytics" className="hover:text-white transition-colors font-medium text-emerald-400">
-                  Impact &amp; Analytics
+                <Link href="/analytics" className="hover:text-[#F7F5EE] transition-colors">
+                  Impact &amp; LCA Analytics
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-white transition-colors text-slate-400">
-                  Operations Console (Admin)
-                </Link>
-              </li>
-              <li>
-                <Link href="/#guardrails" className="hover:text-white transition-colors">
-                  Secure Data Wiping Checklist
-                </Link>
-              </li>
-              <li>
-                <Link href="/#guardrails" className="hover:text-white transition-colors">
-                  Activation Lock Removal (iCloud/FRP)
-                </Link>
-              </li>
-              <li>
-                <Link href="/#categories" className="hover:text-white transition-colors">
-                  Device Category Triage
-                </Link>
-              </li>
-              <li>
-                <Link href="/#faq" className="hover:text-white transition-colors">
-                  Independent Decision Criteria
-                </Link>
-              </li>
-              <li>
-                <Link href="/#faq" className="hover:text-white transition-colors">
-                  Recycler Verification FAQ
+                <Link href="/admin" className="hover:text-[#F7F5EE] transition-colors">
+                  Operations Console
                 </Link>
               </li>
             </ul>
+          </div>
+
+          {/* Col 4: Pilot Scope & Notice */}
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-[11px] font-mono uppercase tracking-widest text-[#F7F5EE] border-b border-[#2E2D2A] pb-2">
+              Pilot Registry
+            </h4>
+            <div className="text-[11px] text-[#A69E8C] space-y-2 leading-relaxed">
+              <p>
+                Active research pilot centered on Delhi NCT with documented NCR collection points.
+              </p>
+              <p className="font-mono text-[10px] text-[#736F66]">
+                REV: 2026.10-DEL · DPCC &amp; CPCB COMPLIANCE FRAMEWORK
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>
-            &copy; 2026 E-Waste Value Recovery. Independent consumer advisory.
-          </p>
-          <p className="max-w-xl text-center md:text-right text-slate-500 leading-normal">
-            No commercial partnerships dictate triage rankings. All recommendations are derived from
-            functional viability, hardware condition, and consumer security safety.
-          </p>
+        {/* Bottom Colophon Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] font-mono text-[#736F66]">
+          <div className="flex items-center gap-2">
+            <span>&copy; 2026 E-Waste Value Recovery Project.</span>
+            <span>&bull;</span>
+            <span>Independent Academic &amp; Communication Design Initiative.</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[#A69E8C]">
+            <Link href="/directory" className="hover:text-[#F7F5EE] transition-colors">
+              Audited Providers
+            </Link>
+            <span>/</span>
+            <Link href="/find-option" className="hover:text-[#F7F5EE] transition-colors">
+              Hardware Diagnostic
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
