@@ -15,55 +15,54 @@ export function Hero() {
             {/* Archival metadata tag */}
             <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#EFECE2] border border-[#D4CDC0] rounded-xs text-[11px] font-mono uppercase tracking-wider text-[#413F3B]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1B3B2B]" />
-              <span>CIRCULAR HARDWARE INTAKE · DELHI PILOT 2026</span>
+              <span>SMARTPHONE RESALE &amp; CIRCULAR INTAKE · DELHI NCR 2026</span>
             </div>
 
             {/* Distinctive Editorial Headline */}
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#141413] leading-[1.08]">
-              Before it becomes waste,{" "}
+              Sell your old phone for the{" "}
               <span className="italic font-serif text-[#1B3B2B]">
-                find out what it&rsquo;s still worth.
+                best realistic price.
               </span>
             </h1>
 
             {/* Concise, Human Body Copy */}
             <p className="text-base sm:text-lg text-[#413F3B] leading-relaxed max-w-2xl font-sans">
-              Faulty, discarded, or obsolete electronics contain functional circuits, donor
-              sub-assemblies, and valuable materials. We compare repair, cash resale,
-              store credit, component salvage, and certified recycling across Delhi NCR
-              — strictly based on device condition and documented local logistics.
+              Compare verified instant doorstep cash, retail exchange vouchers, and official trade-in
+              quotes across Delhi NCT. We calculate itemized inspection deductions, eliminate phantom
+              prices, and track your deal all the way through physical handover and confirmed payment.
             </p>
 
             {/* Primary & Secondary Call to Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <Link
-                href="/find-option"
+                href="/sell-phone"
                 className="px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] font-mono text-xs uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#142D21] flex items-center justify-center gap-2 shadow-sm hover:shadow active:translate-y-px"
               >
-                <span>Assess a Device</span>
+                <span>Sell Your Phone (Instant Net Payout)</span>
                 <ArrowUpRight className="w-4 h-4 text-[#C1DFDC]" />
               </Link>
               <Link
-                href="/directory"
+                href="/find-option"
                 className="px-6 py-3.5 bg-[#FAF8F3] hover:bg-[#EFECE2] text-[#141413] font-mono text-xs uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#D4CDC0] flex items-center justify-center gap-2 active:translate-y-px"
               >
-                <span>Explore Delhi Providers</span>
+                <span>Diagnose Other Hardware</span>
               </Link>
             </div>
 
             {/* Micro Guarantees / Evidence Basis */}
             <div className="pt-6 border-t border-[#DFD9CD] grid grid-cols-2 sm:grid-cols-3 gap-4 text-[11px] font-mono text-[#736F66]">
               <div>
-                <span className="block font-semibold text-[#141413]">6 Audited Pathways</span>
-                <span>Repair, Resale, Parts, Recyclers</span>
+                <span className="block font-semibold text-[#141413]">Realistic Net Payouts</span>
+                <span>Pre-factored inspection deductions</span>
               </div>
               <div>
-                <span className="block font-semibold text-[#141413]">Zero Sponsored Placements</span>
-                <span>Deterministic matching</span>
+                <span className="block font-semibold text-[#141413]">Delhi NCT Doorstep</span>
+                <span>PIN-level service area verification</span>
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <span className="block font-semibold text-[#141413]">Battery Safety Filter</span>
-                <span>Thermal hazard prevention</span>
+                <span>Thermal hazard courier blocks</span>
               </div>
             </div>
           </div>
@@ -138,10 +137,10 @@ export function Hero() {
               <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-[#736F66] border-t border-[#E5E0D4]">
                 <span>METHOD: ITU-T L.1410 GUIDELINES</span>
                 <Link
-                  href="/find-option"
+                  href="/sell-phone"
                   className="text-[#1B3B2B] font-semibold hover:underline flex items-center gap-1"
                 >
-                  <span>Evaluate My Device</span> &rarr;
+                  <span>Instant Phone Valuation</span> &rarr;
                 </Link>
               </div>
             </div>

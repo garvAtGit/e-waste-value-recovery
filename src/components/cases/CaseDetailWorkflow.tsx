@@ -21,6 +21,9 @@ import {
   XCircle,
   FileCheck2,
   Info,
+  DollarSign,
+  Receipt,
+  Smartphone,
 } from "lucide-react";
 
 interface CaseDetailWorkflowProps {
@@ -36,10 +39,43 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
   // Form states for modals/drawers
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [showInspectionModal, setShowInspectionModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Rejection state
   const [rejectReason, setRejectReason] = useState("");
-  const [completeOutcome, setCompleteOutcome] = useState<OutcomeType>("repaired_and_retained");
-  const [financialValue, setFinancialValue] = useState<string>("");
+
+  // Generic completion state
+  const [completeOutcome, setCompleteOutcome] = useState<OutcomeType>(
+    initialCase.pathway_id === "sell-cash"
+      ? "sold_for_cash"
+      : initialCase.pathway_id === "exchange"
+      ? "exchanged_for_voucher"
+      : "repaired_and_retained"
+  );
+  const [financialValue, setFinancialValue] = useState<string>(
+    initialCase.financial_value_inr ? String(initialCase.financial_value_inr) : ""
+  );
   const [evidenceNotes, setEvidenceNotes] = useState<string>("");
+
+  // Phone Resale Inspection State
+  const [agreedInspectionPrice, setAgreedInspectionPrice] = useState<string>(
+    initialCase.financial_value_inr ? String(initialCase.financial_value_inr) : ""
+  );
+  const [inspectionDeductionNotes, setInspectionDeductionNotes] = useState<string>("");
+
+  // Phone Resale Payment Confirmation State
+  const [paymentMethod, setPaymentMethod] = useState<string>(
+    initialCase.pathway_id === "exchange" ? "Store Voucher / Gift Card" : "Instant UPI"
+  );
+  const [paymentTransactionRef, setPaymentTransactionRef] = useState<string>("");
+  const [confirmedPaymentAmount, setConfirmedPaymentAmount] = useState<string>(
+    initialCase.financial_value_inr ? String(initialCase.financial_value_inr) : ""
+  );
+  const [isPaymentConfirmedChecked, setIsPaymentConfirmedChecked] = useState(false);
+
+  const isResalePathway =
+    currentCase.pathway_id === "sell-cash" || currentCase.pathway_id === "exchange";
 
   const statusMeta = HUMAN_STATUS_LABELS[currentCase.current_status] || {
     title: currentCase.current_status,
@@ -77,6 +113,8 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
       setActionSuccess(`Status updated to '${HUMAN_STATUS_LABELS[targetStatus]?.title || targetStatus}'`);
       setShowRejectModal(false);
       setShowCompleteModal(false);
+      setShowInspectionModal(false);
+      setShowPaymentModal(false);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Failed to execute state transition");
     } finally {
@@ -138,6 +176,60 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
         </div>
       </div>
 
+      {/* Resale Milestone Deal Card (if resale pathway) */}
+      {isResalePathway && (
+        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 shadow-xs font-mono">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E5E0D8] mb-4">
+            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#141413]">
+              <Smartphone className="w-4 h-4 text-[#1B3B2B]" />
+              Phone Resale Deal Tracking
+            </span>
+            <span className="text-[11px] text-[#8E8B82]">
+              Assigned Facility: {currentCase.provider?.name || "Self-Managed / Independent"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 bg-[#FAF9F5] rounded-sm border border-[#E5E0D8]">
+              <span className="text-[10px] text-[#8E8B82] uppercase block">Initial Locked Quote</span>
+              <strong className="text-base text-[#141413]">
+                {currentCase.financial_value_inr
+                  ? `₹${currentCase.financial_value_inr.toLocaleString()}`
+                  : "Pending Quote"}
+              </strong>
+            </div>
+
+            <div className="p-3 bg-[#FAF9F5] rounded-sm border border-[#E5E0D8]">
+              <span className="text-[10px] text-[#8E8B82] uppercase block">Physical Inspection</span>
+              <strong className="text-xs text-[#141413] block mt-1">
+                {currentCase.current_status === "dropped_off_or_collected" ||
+                currentCase.current_status === "completed"
+                  ? "✓ Diagnostic Completed"
+                  : "Awaiting Inspection"}
+              </strong>
+            </div>
+
+            <div className="p-3 bg-[#FAF9F5] rounded-sm border border-[#E5E0D8]">
+              <span className="text-[10px] text-[#8E8B82] uppercase block">Agreed Final Payout</span>
+              <strong className="text-base text-[#1B3B2B]">
+                {currentCase.financial_value_inr
+                  ? `₹${currentCase.financial_value_inr.toLocaleString()}`
+                  : "—"}
+              </strong>
+            </div>
+
+            <div className="p-3 bg-[#FAF9F5] rounded-sm border border-[#E5E0D8]">
+              <span className="text-[10px] text-[#8E8B82] uppercase block">Payment Settlement</span>
+              <strong className="text-xs text-[#141413] block mt-1">
+                {currentCase.current_status === "completed"
+                  ? "✓ Paid & Confirmed"
+                  : "Pending Handover"}
+              </strong>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Notifications */}
       {actionError && (
         <div className="bg-[#FFF9F5] border border-[#F3D1C2] text-[#C8532C] text-xs p-4 rounded-sm flex items-start gap-2.5 font-mono">
@@ -175,11 +267,21 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                 <button
                   type="button"
                   disabled={isSubmitting}
-                  onClick={() => handleTransition("contacted", { reasonOrNotes: "User contacted provider via public phone/website" })}
+                  onClick={() =>
+                    handleTransition("contacted", {
+                      reasonOrNotes: isResalePathway
+                        ? "Seller submitted pickup / counter slot request to provider."
+                        : "User contacted provider via public phone/website",
+                    })
+                  }
                   className="w-full py-3 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                 >
                   <Phone className="w-4 h-4" />
-                  <span>I Contacted the Provider (Log Step 2)</span>
+                  <span>
+                    {isResalePathway
+                      ? "I Confirmed Pickup Slot / Contacted Provider (Step 2)"
+                      : "I Contacted the Provider (Log Step 2)"}
+                  </span>
                 </button>
               )}
 
@@ -188,7 +290,13 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => handleTransition("accepted_by_provider", { reasonOrNotes: "Provider confirmed preliminary quote / intake eligibility" })}
+                    onClick={() =>
+                      handleTransition("accepted_by_provider", {
+                        reasonOrNotes: isResalePathway
+                          ? "Provider confirmed buyback quote eligibility and booked inspection schedule."
+                          : "Provider confirmed preliminary quote / intake eligibility",
+                      })
+                    }
                     className="py-3 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                   >
                     <CheckCircle2 className="w-4 h-4" />
@@ -212,36 +320,70 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => handleTransition("in_transit_or_scheduled", { reasonOrNotes: "Scheduled pickup courier / initiated transit" })}
+                    onClick={() =>
+                      handleTransition("in_transit_or_scheduled", {
+                        reasonOrNotes: isResalePathway
+                          ? "Technician dispatch scheduled / courier assigned for doorstep collection."
+                          : "Scheduled pickup courier / initiated transit",
+                      })
+                    }
                     className="py-3 px-4 bg-[#233544] hover:bg-[#192732] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                   >
                     <Truck className="w-4 h-4" />
-                    <span>Courier Scheduled / In-Transit</span>
+                    <span>Technician / Courier Scheduled</span>
                   </button>
 
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => handleTransition("dropped_off_or_collected", { reasonOrNotes: "Delivered device directly to public depot" })}
+                    onClick={() =>
+                      handleTransition("dropped_off_or_collected", {
+                        reasonOrNotes: "Delivered device directly to provider walk-in counter.",
+                      })
+                    }
                     className="py-3 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                   >
                     <Building2 className="w-4 h-4" />
-                    <span>Delivered to Drop-off Depot</span>
+                    <span>Delivered to Counter / Depot</span>
                   </button>
                 </div>
               )}
 
-              {(currentCase.current_status === "in_transit_or_scheduled" || currentCase.current_status === "dropped_off_or_collected") && (
+              {/* Status: In-Transit / Scheduled -> Record Physical Inspection */}
+              {currentCase.current_status === "in_transit_or_scheduled" && (
                 <div className="space-y-3">
-                  <button
-                    type="button"
-                    disabled={isSubmitting}
-                    onClick={() => setShowCompleteModal(true)}
-                    className="w-full py-3.5 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider font-bold rounded-sm text-xs flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50"
-                  >
-                    <FileCheck2 className="w-4 h-4" />
-                    <span>Mark Recovery Completed & Document Outcome</span>
-                  </button>
+                  {isResalePathway ? (
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => {
+                        setAgreedInspectionPrice(
+                          currentCase.financial_value_inr
+                            ? String(currentCase.financial_value_inr)
+                            : ""
+                        );
+                        setShowInspectionModal(true);
+                      }}
+                      className="w-full py-3.5 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider font-bold rounded-sm text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                    >
+                      <Receipt className="w-4 h-4" />
+                      <span>Record Physical Inspection &amp; Final Agreed Price</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() =>
+                        handleTransition("dropped_off_or_collected", {
+                          reasonOrNotes: "Device handed over at inspection depot.",
+                        })
+                      }
+                      className="w-full py-3 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Device Handed Over for Inspection</span>
+                    </button>
+                  )}
 
                   <button
                     type="button"
@@ -250,7 +392,51 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                     className="w-full py-2.5 px-4 bg-[#FAF9F5] hover:bg-[#F4F1EA] text-[#5A574F] border border-[#E5E0D8] font-mono uppercase tracking-wider font-semibold rounded-sm text-xs flex items-center justify-center gap-2 transition-colors"
                   >
                     <AlertTriangle className="w-4 h-4 text-[#C8532C]" />
-                    <span>Report Failure or Logistics Dispute</span>
+                    <span>Report Inspection Dispute or Cancellation</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Status: Dropped Off / Inspected -> Payment Confirmation & Completion */}
+              {currentCase.current_status === "dropped_off_or_collected" && (
+                <div className="space-y-3">
+                  {isResalePathway ? (
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => {
+                        setConfirmedPaymentAmount(
+                          currentCase.financial_value_inr
+                            ? String(currentCase.financial_value_inr)
+                            : ""
+                        );
+                        setShowPaymentModal(true);
+                      }}
+                      className="w-full py-3.5 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider font-bold rounded-sm text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                    >
+                      <DollarSign className="w-4 h-4" />
+                      <span>Confirm Payment Receipt &amp; Complete Handover</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => setShowCompleteModal(true)}
+                      className="w-full py-3.5 px-4 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider font-bold rounded-sm text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                    >
+                      <FileCheck2 className="w-4 h-4" />
+                      <span>Mark Recovery Completed &amp; Document Outcome</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => setShowRejectModal(true)}
+                    className="w-full py-2.5 px-4 bg-[#FAF9F5] hover:bg-[#F4F1EA] text-[#5A574F] border border-[#E5E0D8] font-mono uppercase tracking-wider font-semibold rounded-sm text-xs flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <AlertTriangle className="w-4 h-4 text-[#C8532C]" />
+                    <span>Report Payment Dispute or Failed Handover</span>
                   </button>
                 </div>
               )}
@@ -269,10 +455,10 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
 
                   <div className="pt-2 flex flex-wrap gap-2">
                     <Link
-                      href="/find-option"
+                      href="/sell-phone"
                       className="px-3.5 py-2 bg-[#1B3B2B] hover:bg-[#132A1F] text-white rounded-sm font-semibold text-xs transition-colors inline-flex items-center gap-1.5 uppercase"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" /> Evaluate Alternative Pathway
+                      <RotateCcw className="w-3.5 h-3.5" /> Evaluate Other Phone Offers
                     </Link>
                     <Link
                       href="/directory"
@@ -293,7 +479,7 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                   <p className="text-[#2C5E45] font-mono leading-relaxed">
                     Outcome: <strong className="capitalize">{currentCase.outcome_type?.replace(/_/g, " ") || "Recovered"}</strong>.
                     {currentCase.financial_value_inr && (
-                      <span> Financial value realised: <strong>₹{currentCase.financial_value_inr.toLocaleString()}</strong>.</span>
+                      <span> Verified payout received: <strong>₹{currentCase.financial_value_inr.toLocaleString()}</strong>.</span>
                     )}
                   </p>
                 </div>
@@ -301,7 +487,7 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
             </div>
           </div>
 
-          {/* Modal / Dialog for Reporting Rejection or Failure */}
+          {/* Modal 1: Report Rejection or Failure */}
           {showRejectModal && (
             <div className="bg-[#FFF9F5] border border-[#C8532C] rounded-sm p-6 shadow-sm space-y-4">
               <h3 className="font-serif text-base font-bold text-[#C8532C] flex items-center gap-2">
@@ -315,7 +501,7 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                 rows={3}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                placeholder="e.g. In-store inspector detected motherboard liquid corrosion; trade-in portal reduced quote to ₹0; provider does not accept loose batteries..."
+                placeholder="e.g. Technician detected motherboard water damage; trade-in portal reduced quote to ₹0; buyer declined lowball offer..."
                 className="w-full text-xs bg-white border border-[#E5E0D8] rounded-sm p-3 text-[#141413] placeholder-[#8E8B82] focus:outline-none focus:border-[#C8532C] focus:ring-1 focus:ring-[#C8532C]"
               />
               <div className="flex justify-end gap-2 pt-2 font-mono text-xs">
@@ -342,7 +528,190 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
             </div>
           )}
 
-          {/* Modal / Dialog for Completing Recovery */}
+          {/* Modal 2: Physical Inspection Result & Final Agreed Price */}
+          {showInspectionModal && (
+            <div className="bg-white border-2 border-[#1B3B2B] rounded-sm p-6 shadow-sm space-y-4">
+              <h3 className="font-serif text-base font-bold text-[#141413] flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-[#1B3B2B]" />
+                Record Physical Inspection Result &amp; Final Agreed Price
+              </h3>
+              <p className="text-xs text-[#5A574F] leading-relaxed font-sans">
+                The technician or counter inspector evaluates the device. Record whether any deductions were applied and confirm the final agreed price before handover.
+              </p>
+              <div className="space-y-3 font-mono text-xs">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1">
+                    Initial Locked Quote (INR):
+                  </label>
+                  <input
+                    type="text"
+                    disabled
+                    value={currentCase.financial_value_inr ? `₹${currentCase.financial_value_inr.toLocaleString()}` : "Not recorded"}
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#E5E0D8] rounded-sm p-2.5 text-[#8E8B82]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#141413] font-bold mb-1">
+                    Final Agreed Buyback Price in INR:
+                  </label>
+                  <input
+                    type="number"
+                    value={agreedInspectionPrice}
+                    onChange={(e) => setAgreedInspectionPrice(e.target.value)}
+                    placeholder="e.g. 17800"
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-2.5 text-[#141413] focus:outline-none focus:border-[#1B3B2B]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1">
+                    Inspector Deductions / Condition Notes:
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={inspectionDeductionNotes}
+                    onChange={(e) => setInspectionDeductionNotes(e.target.value)}
+                    placeholder="e.g. Display & cameras passed; minor scuff on back edge resulted in -₹500 deduction; agreed to ₹17,800."
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-2.5 text-[#141413] focus:outline-none focus:border-[#1B3B2B]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 font-mono text-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowInspectionModal(false)}
+                  className="px-3 py-1.5 text-xs text-[#5A574F] hover:text-[#141413]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmitting || !agreedInspectionPrice || parseFloat(agreedInspectionPrice) <= 0}
+                  onClick={() =>
+                    handleTransition("dropped_off_or_collected", {
+                      financialValueInr: parseFloat(agreedInspectionPrice),
+                      reasonOrNotes: `Physical inspection completed: Initial quote ₹${currentCase.financial_value_inr || 0} -> Final agreed price ₹${agreedInspectionPrice}. Notes: ${inspectionDeductionNotes || "No deductions applied."}`,
+                    })
+                  }
+                  className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#132A1F] text-white rounded-sm text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50"
+                >
+                  Confirm Inspection &amp; Hand Over Device
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Modal 3: Payment Receipt Confirmation (Phone Resale) */}
+          {showPaymentModal && (
+            <div className="bg-white border-2 border-[#1B3B2B] rounded-sm p-6 shadow-sm space-y-4">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-[#1B3B2B]" />
+                <h3 className="font-serif text-base font-bold text-[#141413]">
+                  Verify Payment Receipt &amp; Conclude Handover
+                </h3>
+              </div>
+              <p className="text-xs text-[#5A574F] leading-relaxed font-sans">
+                <strong>Mandatory Confirmation:</strong> Do NOT hand over your phone until the agreed payout has been deposited in your account or the gift voucher has been verified.
+              </p>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1">
+                    Payment Method Received:
+                  </label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-2.5 text-[#141413]"
+                  >
+                    <option value="Instant UPI">Instant UPI (Google Pay / PhonePe / Paytm)</option>
+                    <option value="IMPS Bank Transfer">IMPS Bank Direct Deposit</option>
+                    <option value="Store Voucher / Gift Card">Store Exchange Voucher / Credit Card</option>
+                    <option value="Cash in Hand">Direct Cash in Hand</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1">
+                    Confirmed Net Payout Amount (INR):
+                  </label>
+                  <input
+                    type="number"
+                    value={confirmedPaymentAmount}
+                    onChange={(e) => setConfirmedPaymentAmount(e.target.value)}
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-2.5 text-[#141413]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-[#5A574F] mb-1">
+                    UPI / Bank Ref Number or Voucher Code:
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentTransactionRef}
+                    onChange={(e) => setPaymentTransactionRef(e.target.value)}
+                    placeholder="e.g. UPI/2026/89412389 or VOUCHER-CR-9921"
+                    className="w-full text-xs bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-2.5 text-[#141413]"
+                    required
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <label className="flex items-start gap-2 p-3 bg-[#FAF9F5] border border-[#E5E0D8] rounded-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isPaymentConfirmedChecked}
+                      onChange={(e) => setIsPaymentConfirmedChecked(e.target.checked)}
+                      className="mt-0.5"
+                    />
+                    <span className="text-[11px] leading-snug text-[#141413]">
+                      I confirm that <strong>₹{confirmedPaymentAmount || "agreed amount"}</strong> has been credited to my bank account / UPI / voucher before concluding the transaction.
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 font-mono text-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentModal(false)}
+                  className="px-3 py-1.5 text-xs text-[#5A574F] hover:text-[#141413]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={
+                    isSubmitting ||
+                    !isPaymentConfirmedChecked ||
+                    !paymentTransactionRef.trim() ||
+                    !confirmedPaymentAmount ||
+                    parseFloat(confirmedPaymentAmount) <= 0
+                  }
+                  onClick={() =>
+                    handleTransition("completed", {
+                      outcomeType:
+                        currentCase.pathway_id === "exchange"
+                          ? "exchanged_for_voucher"
+                          : "sold_for_cash",
+                      financialValueInr: parseFloat(confirmedPaymentAmount),
+                      evidenceNotes: `Payment received: ₹${confirmedPaymentAmount} via ${paymentMethod}. Reference: ${paymentTransactionRef.trim()}.`,
+                    })
+                  }
+                  className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#132A1F] text-white rounded-sm text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50"
+                >
+                  Verify &amp; Mark Completed
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Modal 4: Generic Recovery Completion Modal */}
           {showCompleteModal && (
             <div className="bg-white border-2 border-[#1B3B2B] rounded-sm p-6 shadow-sm space-y-4">
               <h3 className="font-serif text-base font-bold text-[#141413] flex items-center gap-2">
@@ -364,7 +733,7 @@ export function CaseDetailWorkflow({ initialCase }: CaseDetailWorkflowProps) {
                     <option value="exchanged_for_voucher">Exchanged for Store Credit / Trade-in Voucher</option>
                     <option value="salvaged_for_parts">Liquidated to Refurbisher / Component Salvager</option>
                     <option value="donated_for_reuse">Donated to School / Civic Charity</option>
-                    <option value="recycled_certified">Shredded & Refined by Authorised Recycler</option>
+                    <option value="recycled_certified">Shredded &amp; Refined by Authorised Recycler</option>
                     <option value="hazardous_containment">Handed over for Regulated Hazardous Isolation</option>
                   </select>
                 </div>

@@ -300,7 +300,7 @@ export class RecoveryRepository {
       verification_tier: "user_reported",
       is_provider_verified: false,
       outcome_type: null,
-      financial_value_inr: null,
+      financial_value_inr: input.financialValueInr ?? null,
       rejection_or_failure_reason: null,
       user_notes: input.userNotes || null,
       evidence_notes: null,
@@ -316,7 +316,7 @@ export class RecoveryRepository {
       to_status: "created",
       changed_by_role: "user",
       is_provider_confirmed: false,
-      notes: "Recovery case initiated from device assessment.",
+      notes: input.userNotes || "Recovery case initiated from device assessment.",
       created_at: now,
     };
 

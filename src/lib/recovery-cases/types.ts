@@ -42,6 +42,7 @@ export interface CreateCaseInput {
   providerId?: string | null;
   assessmentInput?: ComparisonInput;
   userNotes?: string;
+  financialValueInr?: number | null;
 }
 
 export const VALID_STATUS_TRANSITIONS: Record<CaseStatus, CaseStatus[]> = {

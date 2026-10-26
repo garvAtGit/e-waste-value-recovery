@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       assessmentInput,
       savedAssessmentId,
       userNotes,
+      financialValueInr: typeof body.financialValueInr === "number" ? body.financialValueInr : undefined,
     };
 
     const newCase = await RecoveryRepository.createCase(input);

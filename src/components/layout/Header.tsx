@@ -13,10 +13,11 @@ interface NavItem {
 }
 
 const PRIMARY_NAV: NavItem[] = [
-  { href: "/find-option", label: "Assess Hardware", index: "01" },
-  { href: "/directory", label: "Provider Directory", index: "02" },
-  { href: "/dashboard", label: "Case Dossier", index: "03" },
-  { href: "/analytics", label: "Impact & LCA", index: "04" },
+  { href: "/sell-phone", label: "Sell Phone", index: "01", badge: "Instant Payout" },
+  { href: "/find-option", label: "Assess Other", index: "02" },
+  { href: "/directory", label: "Directory", index: "03" },
+  { href: "/dashboard", label: "Cases", index: "04" },
+  { href: "/analytics", label: "Impact & LCA", index: "05" },
 ];
 
 function HeaderFallback() {
@@ -54,10 +55,10 @@ function HeaderFallback() {
           </Link>
           <div className="hidden md:flex items-center gap-3">
             <Link
-              href="/find-option"
+              href="/sell-phone"
               className="px-4 py-2 bg-[#1B3B2B] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5"
             >
-              <span>Assess a Device</span>
+              <span>Sell Phone</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
             </Link>
           </div>
@@ -176,10 +177,10 @@ function HeaderInner() {
             {/* Action CTA & Micro Badging */}
             <div className="hidden md:flex items-center gap-3">
               <Link
-                href="/find-option"
+                href="/sell-phone"
                 className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#142D21] flex items-center gap-1.5 shadow-xs hover:shadow-sm active:translate-y-px"
               >
-                <span>Assess a Device</span>
+                <span>Sell Phone (Best Payout)</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
               </Link>
             </div>
@@ -187,10 +188,10 @@ function HeaderInner() {
             {/* Mobile Menu Toggle Button */}
             <div className="flex items-center md:hidden gap-2">
               <Link
-                href="/find-option"
+                href="/sell-phone"
                 className="px-2.5 py-1.5 bg-[#1B3B2B] text-[#F7F5EE] text-[11px] font-mono uppercase rounded-sm border border-[#142D21]"
               >
-                Assess
+                Sell Phone
               </Link>
               <button
                 type="button"

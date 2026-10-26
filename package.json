@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "npx tsx tests/schema-validation.test.ts && npx tsx tests/provider-directory.test.ts && npx tsx tests/comparison-engine.test.ts && npx tsx tests/pilot-scenarios.test.ts && npx tsx tests/matrix-combinations.test.ts && npx tsx tests/recovery-cases.test.ts && npx tsx tests/admin-operations.test.ts && npx tsx tests/analytics-engine.test.ts && npx tsx tests/production-readiness.test.ts"
+    "test": "npx tsx tests/schema-validation.test.ts && npx tsx tests/provider-directory.test.ts && npx tsx tests/comparison-engine.test.ts && npx tsx tests/pilot-scenarios.test.ts && npx tsx tests/matrix-combinations.test.ts && npx tsx tests/recovery-cases.test.ts && npx tsx tests/admin-operations.test.ts && npx tsx tests/analytics-engine.test.ts && npx tsx tests/production-readiness.test.ts && npx tsx tests/phone-resale-workflow.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
