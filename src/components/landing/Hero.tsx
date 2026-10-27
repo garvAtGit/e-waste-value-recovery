@@ -1,148 +1,158 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Cpu, AlertTriangle } from "lucide-react";
+import { ArrowUpRight, Wrench, ShieldCheck, Truck, Check, ArrowRight, Sparkles } from "lucide-react";
+
+const QUICK_PREVIEW_MODELS = [
+  { id: "apple-iphone-13", name: "iPhone 13 (128GB)", cash: "24,500", voucher: "26,200", brand: "Apple" },
+  { id: "samsung-galaxy-s23", name: "Galaxy S23 (128GB)", cash: "28,500", voucher: "30,500", brand: "Samsung" },
+  { id: "oneplus-11", name: "OnePlus 11 (128GB)", cash: "21,000", voucher: "22,500", brand: "OnePlus" },
+  { id: "google-pixel-7", name: "Pixel 7 (128GB)", cash: "17,500", voucher: "18,800", brand: "Google" },
+];
 
 export function Hero() {
+  const [selectedQuickModel, setSelectedQuickModel] = useState(QUICK_PREVIEW_MODELS[0]);
+
   return (
-    <section className="relative overflow-hidden bg-[#F7F5EE] border-b border-[#DFD9CD] pt-12 pb-16 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-28">
-      {/* Background blueprint grid */}
-      <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-60" />
+    <section className="relative overflow-hidden bg-[#F7F5EE] border-b border-[#DFD9CD] pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+      {/* Subtle blueprint grid texture */}
+      <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-50" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Editorial Narrative Column */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Archival metadata tag */}
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#EFECE2] border border-[#D4CDC0] rounded-xs text-[11px] font-mono uppercase tracking-wider text-[#413F3B]">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#FAF8F3] border border-[#DFD9CD] rounded-xs text-[11px] font-mono uppercase tracking-wider text-[#5A574F]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1B3B2B]" />
-              <span>SMARTPHONE RESALE &amp; CIRCULAR INTAKE · DELHI NCR 2026</span>
+              <span>INDEPENDENT PHONE VALUATION · DELHI NCR</span>
             </div>
 
-            {/* Distinctive Editorial Headline */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#141413] leading-[1.08]">
-              Sell your old phone for the{" "}
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#141413] leading-[1.08]">
+              Find the best realistic price for your{" "}
               <span className="italic font-serif text-[#1B3B2B]">
-                best realistic price.
+                old smartphone.
               </span>
             </h1>
 
-            {/* Concise, Human Body Copy */}
-            <p className="text-base sm:text-lg text-[#413F3B] leading-relaxed max-w-2xl font-sans">
-              Compare verified instant doorstep cash, retail exchange vouchers, and official trade-in
-              quotes across Delhi NCT. We calculate itemized inspection deductions, eliminate phantom
-              prices, and track your deal all the way through physical handover and confirmed payment.
+            <p className="text-base sm:text-lg text-[#5A574F] leading-relaxed max-w-2xl font-sans">
+              Compare verified doorstep cash buybacks, retail exchange vouchers, and official trade-ins across Delhi. We calculate pre-factored inspection deductions so you never get hit by unexpected lowball offers at your doorstep.
             </p>
 
-            {/* Primary & Secondary Call to Actions */}
+            {/* Primary & Secondary Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <Link
                 href="/sell-phone"
-                className="px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] font-mono text-xs uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#142D21] flex items-center justify-center gap-2 shadow-sm hover:shadow active:translate-y-px"
+                className="px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] font-mono text-xs uppercase tracking-wider font-semibold rounded-sm transition-all duration-150 border border-[#142D21] flex items-center justify-center gap-2 shadow-xs hover:shadow active:translate-y-px min-h-[44px]"
               >
-                <span>Sell Your Phone (Instant Net Payout)</span>
+                <span>Find My Phone (Instant Payout)</span>
                 <ArrowUpRight className="w-4 h-4 text-[#C1DFDC]" />
               </Link>
               <Link
-                href="/find-option"
-                className="px-6 py-3.5 bg-[#FAF8F3] hover:bg-[#EFECE2] text-[#141413] font-mono text-xs uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#D4CDC0] flex items-center justify-center gap-2 active:translate-y-px"
+                href="/repair-vs-sell"
+                className="px-5 py-3.5 bg-[#FAF8F3] hover:bg-[#EFECE2] text-[#141413] font-mono text-xs uppercase tracking-wider rounded-sm transition-all duration-150 border border-[#D4CDC0] flex items-center justify-center gap-2 active:translate-y-px min-h-[44px]"
               >
-                <span>Diagnose Other Hardware</span>
+                <Wrench className="w-3.5 h-3.5 text-[#257A72]" />
+                <span>Compare Repair vs. Sell</span>
               </Link>
             </div>
 
-            {/* Micro Guarantees / Evidence Basis */}
-            <div className="pt-6 border-t border-[#DFD9CD] grid grid-cols-2 sm:grid-cols-3 gap-4 text-[11px] font-mono text-[#736F66]">
-              <div>
-                <span className="block font-semibold text-[#141413]">Realistic Net Payouts</span>
-                <span>Pre-factored inspection deductions</span>
+            {/* Key Transparency Signals */}
+            <div className="pt-6 border-t border-[#DFD9CD] grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono text-[#736F66]">
+              <div className="space-y-0.5">
+                <span className="block font-semibold text-[#141413] flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#1B3B2B]" />
+                  Pre-Deduction Math
+                </span>
+                <span className="text-[11px] text-[#5A574F]">Realistic net payouts</span>
               </div>
-              <div>
-                <span className="block font-semibold text-[#141413]">Delhi NCT Doorstep</span>
-                <span>PIN-level service area verification</span>
+              <div className="space-y-0.5">
+                <span className="block font-semibold text-[#141413] flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#1B3B2B]" />
+                  Delhi Doorstep
+                </span>
+                <span className="text-[11px] text-[#5A574F]">Exact PIN verification</span>
               </div>
-              <div className="col-span-2 sm:col-span-1">
-                <span className="block font-semibold text-[#141413]">Battery Safety Filter</span>
-                <span>Thermal hazard courier blocks</span>
+              <div className="col-span-2 sm:col-span-1 space-y-0.5">
+                <span className="block font-semibold text-[#141413] flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-[#1B3B2B]" />
+                  Zero Sponsored Bias
+                </span>
+                <span className="text-[11px] text-[#5A574F]">Audited local directory</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Art-Directed Exploded Specimen Diagram */}
+          {/* Right Column: Live Interactive Quick-Valuation Preview Card */}
           <div className="lg:col-span-5">
-            <div className="bg-[#FAF8F3] border border-[#D4CDC0] rounded-sm p-6 sm:p-7 shadow-xs space-y-5 relative">
-              {/* Card Header Stamp */}
+            <div className="bg-white border border-[#D4CDC0] rounded-sm p-6 sm:p-7 shadow-xs space-y-5 relative">
+              {/* Card Header */}
               <div className="flex items-center justify-between pb-3 border-b border-[#E5E0D4] text-[11px] font-mono uppercase text-[#736F66]">
-                <span className="flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-[#257A72]" />
-                  <span>SPECIMEN ANATOMY // REF-SMARTPHONE</span>
+                <span className="flex items-center gap-1.5 text-[#1B3B2B] font-semibold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>LIVE DELHI ESTIMATE PREVIEW</span>
                 </span>
-                <span className="text-[#C8532C] font-semibold">RECOVERABLE VALUE</span>
+                <span className="text-[#8E8B82]">GOOD CONDITION</span>
               </div>
 
-              {/* Exploded Component Breakdown Matrix */}
-              <div className="space-y-3 font-mono text-xs">
-                {/* 1. Logic Board */}
-                <div className="p-3 bg-[#F4F1E8] border border-[#DFD9CD] rounded-xs flex items-start justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-[#736F66] uppercase block">PART 01 · LOGIC BOARD &amp; SOC</span>
-                    <strong className="text-[#141413] font-semibold block text-xs">Gold &amp; Copper Traces · Working ICs</strong>
-                    <span className="text-[11px] text-[#413F3B]">Eligible for Component Harvesting or Board-level Repair.</span>
-                  </div>
-                  <span className="px-2 py-0.5 bg-[#EBF2ED] text-[#1B3B2B] border border-[#C3D9CB] rounded-xs text-[10px] font-bold shrink-0">
-                    HIGH VALUE
-                  </span>
-                </div>
-
-                {/* 2. Display Assembly */}
-                <div className="p-3 bg-[#F4F1E8] border border-[#DFD9CD] rounded-xs flex items-start justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-[#736F66] uppercase block">PART 02 · AMOLED / LCD PANEL</span>
-                    <strong className="text-[#141413] font-semibold block text-xs">Original OEM Digitizer &amp; Polarizer</strong>
-                    <span className="text-[11px] text-[#413F3B]">Intact inner screens retain up to 40% of original part cost.</span>
-                  </div>
-                  <span className="px-2 py-0.5 bg-[#E9F3F2] text-[#257A72] border border-[#C1DFDC] rounded-xs text-[10px] font-bold shrink-0">
-                    DONOR PART
-                  </span>
-                </div>
-
-                {/* 3. Lithium-Ion Battery */}
-                <div className="p-3 bg-[#FBECE6] border border-[#F2C2B2] rounded-xs flex items-start justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-[#A63C19] uppercase block flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3 text-[#C8532C]" />
-                      PART 03 · LI-ION BATTERY CELL
-                    </span>
-                    <strong className="text-[#A63C19] font-semibold block text-xs">Cobalt, Lithium, Nickel Salts</strong>
-                    <span className="text-[11px] text-[#732B13]">Swollen cells blocked from commercial couriers; requires hazmat bay.</span>
-                  </div>
-                  <span className="px-2 py-0.5 bg-white text-[#C8532C] border border-[#F2C2B2] rounded-xs text-[10px] font-bold shrink-0">
-                    HAZMAT CHECK
-                  </span>
-                </div>
-
-                {/* 4. Aluminum Chassis */}
-                <div className="p-3 bg-[#F4F1E8] border border-[#DFD9CD] rounded-xs flex items-start justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-[#736F66] uppercase block">PART 04 · ANODISED CHASSIS</span>
-                    <strong className="text-[#141413] font-semibold block text-xs">Structural Aerospace Aluminum</strong>
-                    <span className="text-[11px] text-[#413F3B]">95% lower energy to smelt via certified secondary smelting.</span>
-                  </div>
-                  <span className="px-2 py-0.5 bg-[#EFECE2] text-[#413F3B] border border-[#D4CDC0] rounded-xs text-[10px] font-bold shrink-0">
-                    SMELT RECOVERY
-                  </span>
+              {/* Quick Model Selector Pills */}
+              <div className="space-y-2">
+                <span className="block text-[11px] font-mono uppercase tracking-wider text-[#736F66]">
+                  Select Sample Device:
+                </span>
+                <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                  {QUICK_PREVIEW_MODELS.map((model) => {
+                    const isSelected = selectedQuickModel.id === model.id;
+                    return (
+                      <button
+                        key={model.id}
+                        type="button"
+                        onClick={() => setSelectedQuickModel(model)}
+                        className={`p-2.5 rounded-xs text-left transition-all border ${
+                          isSelected
+                            ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold shadow-2xs"
+                            : "bg-[#FAF9F5] text-[#141413] border-[#E5E0D8] hover:border-[#141413]"
+                        }`}
+                      >
+                        <span className="truncate block text-xs">{model.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Card Footer Technical Note */}
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-[#736F66] border-t border-[#E5E0D4]">
-                <span>METHOD: ITU-T L.1410 GUIDELINES</span>
-                <Link
-                  href="/sell-phone"
-                  className="text-[#1B3B2B] font-semibold hover:underline flex items-center gap-1"
-                >
-                  <span>Instant Phone Valuation</span> &rarr;
-                </Link>
+              {/* Comparative Price Display */}
+              <div className="bg-[#FAF9F5] rounded-xs p-4 border border-[#E5E0D8] space-y-3 font-mono">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E5E0D8]">
+                  <div>
+                    <span className="text-[10px] text-[#8E8B82] uppercase block">Top Doorstep Cash</span>
+                    <strong className="text-xl font-serif font-bold text-[#141413]">
+                      ₹{selectedQuickModel.cash}
+                    </strong>
+                  </div>
+                  <span className="text-[10px] bg-[#EDF5F0] text-[#1B3B2B] border border-[#C6DFD0] px-2 py-0.5 rounded-xs font-semibold">
+                    Direct Bank / UPI
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-[#5A574F]">
+                  <span>Retail Store Exchange (Croma):</span>
+                  <strong className="text-[#141413]">₹{selectedQuickModel.voucher}</strong>
+                </div>
+
+                <p className="text-[10px] font-sans text-[#736F66] leading-tight pt-1">
+                  *Based on audited diagnostic benchmarks in Delhi NCT. Physical technician inspection confirms final settlement.
+                </p>
               </div>
+
+              {/* Direct Link to Sell Phone */}
+              <Link
+                href="/sell-phone"
+                className="w-full py-3 px-4 bg-[#141413] hover:bg-[#20201E] text-white font-mono text-xs uppercase tracking-wider font-semibold rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
+              >
+                <span>Calculate Your Exact Value</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>

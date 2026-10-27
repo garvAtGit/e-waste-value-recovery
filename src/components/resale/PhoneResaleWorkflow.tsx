@@ -25,12 +25,20 @@ import {
   CheckCircle2,
   AlertTriangle,
   ArrowRight,
+  ArrowLeft,
   Calendar,
   ExternalLink,
   RotateCcw,
   MapPin,
   ArrowUpRight,
   Wrench,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Truck,
+  Check,
+  ShieldCheck,
 } from "lucide-react";
 
 export function PhoneResaleWorkflow() {
@@ -53,14 +61,34 @@ export function PhoneResaleWorkflow() {
   const [rankingMode, setRankingMode] = useState<ResaleRankingMode>("highest_cash");
   const [stage4Tab, setStage4Tab] = useState<"offers" | "repair_vs_sell">("offers");
 
+  // Search query for model discovery
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Expandable state for offer cards & calculation explanation
+  const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
+  const [showFormulaBreakdown, setShowFormulaBreakdown] = useState<boolean>(false);
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Filter models by selected brand
+  const toggleOfferDisclosure = (key: string) => {
+    setExpandedOffers((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Filter models by selected brand OR global search
   const availableModels = useMemo(() => {
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      return PHONE_CATALOG.filter(
+        (m) =>
+          m.name.toLowerCase().includes(q) ||
+          m.brand.toLowerCase().includes(q) ||
+          m.id.toLowerCase().includes(q)
+      );
+    }
     return PHONE_CATALOG.filter((m) => m.brand === selectedBrand);
-  }, [selectedBrand]);
+  }, [selectedBrand, searchQuery]);
 
   const activeModel = useMemo(() => {
     return (
@@ -119,6 +147,7 @@ export function PhoneResaleWorkflow() {
   // Handle Brand Change
   const handleBrandChange = (brand: PhoneBrand) => {
     setSelectedBrand(brand);
+    setSearchQuery("");
     const firstModel = PHONE_CATALOG.find((m) => m.brand === brand);
     if (firstModel) {
       setSelectedModelId(firstModel.id);
@@ -130,8 +159,11 @@ export function PhoneResaleWorkflow() {
   const handleModelChange = (modelId: string) => {
     setSelectedModelId(modelId);
     const found = PHONE_CATALOG.find((m) => m.id === modelId);
-    if (found && !found.storageOptions.includes(selectedStorage)) {
-      setSelectedStorage(found.storageOptions[0] || "128GB");
+    if (found) {
+      setSelectedBrand(found.brand);
+      if (!found.storageOptions.includes(selectedStorage)) {
+        setSelectedStorage(found.storageOptions[0] || "128GB");
+      }
     }
   };
 
@@ -219,165 +251,227 @@ export function PhoneResaleWorkflow() {
   const locality = isDelhi ? getDelhiLocalityName(pincode) : null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-      {/* Top Header & Context Tag */}
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Editorial Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#E5E0D8]">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2 text-[11px] font-mono uppercase text-[#736F66]">
-            <span>SMARTPHONE RESALE ENGINE</span>
-            <span>&bull;</span>
-            <span>DELHI PILOT AUDIT</span>
-            <span>&bull;</span>
-            <span className="text-[#1B3B2B] font-semibold">VERIFIED NET PAYOUT</span>
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#FAF8F3] border border-[#DFD9CD] rounded-xs text-[11px] font-mono uppercase tracking-wider text-[#5A574F]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1B3B2B]" />
+            <span>PHONE RESALE &amp; VALUATION REGISTRY · DELHI NCR</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#141413] tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#141413] tracking-tight leading-tight">
             Sell Your Phone for the Best Realistic Price
           </h1>
-          <p className="text-xs sm:text-sm text-[#5A574F] font-sans max-w-3xl leading-relaxed">
-            Transparent comparison across Cashify Doorstep Buyback, Croma Superrr Exchange,
-            Apple Trade In Saket, and direct buyer benchmarks. Pre-disclosed inspection
-            deduction rules with zero fabricated quotes.
+          <p className="text-sm sm:text-base text-[#5A574F] font-sans max-w-2xl leading-relaxed">
+            Compare verified doorstep cash buybacks, store vouchers, and official trade-in schedules.
+            We factor in actual inspection deductions so you don&apos;t face surprise price drops.
           </p>
         </div>
 
-        {/* Live Best Realistic Estimate Pill */}
+        {/* Live Top Offer Teaser if available */}
         {!valuation.isHazardous && valuation.bestRealisticOffer && (
-          <div className="bg-[#FAF9F5] border border-[#E5E0D8] rounded-sm p-3.5 sm:text-right shrink-0 font-mono">
-            <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block">
+          <div className="bg-[#FAF8F3] border border-[#D5D0C5] rounded-sm p-4 sm:text-right shrink-0 font-mono shadow-xs">
+            <span className="text-[10px] text-[#736F66] uppercase tracking-wider block">
               Top Verified Offer
             </span>
-            <strong className="text-2xl sm:text-3xl font-serif text-[#141413] block">
-              ₹{valuation.bestRealisticOffer.estimatedNetPayout.toLocaleString()}
-            </strong>
-            <span className="text-[11px] text-[#1B3B2B] block">
-              {valuation.bestRealisticOffer.providerName.split("(")[0]} · Instant Payout
+            <div className="flex sm:justify-end items-baseline gap-1 mt-0.5">
+              <span className="text-xs text-[#141413]">₹</span>
+              <strong className="text-2xl sm:text-3xl font-serif font-bold text-[#141413]">
+                {valuation.bestRealisticOffer.estimatedNetPayout.toLocaleString()}
+              </strong>
+            </div>
+            <span className="text-[11px] text-[#1B3B2B] font-semibold block mt-0.5">
+              {valuation.bestRealisticOffer.providerName.split("(")[0].trim()} ·{" "}
+              {valuation.bestRealisticOffer.financialType === "voucher" ? "Store Voucher" : "Instant Cash"}
             </span>
           </div>
         )}
       </div>
 
-      {/* 4-Stage Guided Stepper */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-        {[
-          { num: 1, label: "Brand & Model" },
-          { num: 2, label: "Condition & Faults" },
-          { num: 3, label: "Box & Location" },
-          { num: 4, label: "Compare Offers" },
-        ].map((stage) => {
-          const isActive = activeStage === stage.num;
-          const isPassed = activeStage > stage.num;
-          return (
-            <button
-              key={stage.num}
-              type="button"
-              onClick={() => setActiveStage(stage.num as 1 | 2 | 3 | 4)}
-              className={`p-3 text-left border rounded-sm transition-all ${
-                isActive
-                  ? "bg-[#1B3B2B] text-white border-[#1B3B2B] shadow-xs"
-                  : isPassed
-                  ? "bg-white text-[#141413] border-[#1B3B2B]/40 hover:border-[#1B3B2B]"
-                  : "bg-white text-[#8E8B82] border-[#E5E0D8] hover:border-[#D5D0C5]"
-              }`}
-            >
-              <div className="flex items-center justify-between text-[10px] uppercase mb-1">
-                <span className={isActive ? "text-[#C1DFDC]" : "text-[#8E8B82]"}>
-                  Stage 0{stage.num}
+      {/* 4-Stage Progressive Stepper */}
+      <nav aria-label="Assessment Progress" className="bg-[#FAF9F5] p-1.5 sm:p-2 rounded-sm border border-[#E5E0D8]">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 font-mono text-xs">
+          {[
+            { num: 1, label: "Phone Model", short: "Model" },
+            { num: 2, label: "Condition & Faults", short: "Condition" },
+            { num: 3, label: "Accessories & PIN", short: "Logistics" },
+            { num: 4, label: "Compare Offers", short: "Offers" },
+          ].map((stage) => {
+            const isActive = activeStage === stage.num;
+            const isCompleted = activeStage > stage.num;
+            return (
+              <button
+                key={stage.num}
+                type="button"
+                onClick={() => setActiveStage(stage.num as 1 | 2 | 3 | 4)}
+                className={`p-2.5 sm:p-3 text-left rounded-xs transition-all flex flex-col justify-between min-h-[56px] ${
+                  isActive
+                    ? "bg-[#1B3B2B] text-white shadow-xs font-semibold"
+                    : isCompleted
+                    ? "bg-white text-[#141413] border border-[#C6DFD0] hover:bg-[#EDF5F0]"
+                    : "bg-transparent text-[#736F66] hover:bg-white/60 hover:text-[#141413]"
+                }`}
+              >
+                <div className="flex items-center justify-between text-[10px] tracking-wider uppercase mb-1">
+                  <span className={isActive ? "text-[#C1DFDC]" : "text-[#8E8B82]"}>
+                    0{stage.num}
+                  </span>
+                  {isCompleted && <Check className="w-3.5 h-3.5 text-[#1B3B2B]" />}
+                </div>
+                <span className="text-xs sm:text-[13px] truncate leading-tight font-sans sm:font-mono">
+                  <span className="hidden sm:inline">{stage.label}</span>
+                  <span className="sm:hidden">{stage.short}</span>
                 </span>
-                {isPassed && <CheckCircle2 className="w-3.5 h-3.5 text-[#1B3B2B]" />}
-              </div>
-              <span className="font-semibold block text-xs truncate">{stage.label}</span>
-            </button>
-          );
-        })}
-      </div>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
-      {/* Submission Errors */}
+      {/* Submission Error Banner */}
       {submitError && (
-        <div className="p-4 bg-[#FFF9F5] border border-[#F3D1C2] text-[#C8532C] text-xs font-mono rounded-sm flex items-start gap-2">
+        <div className="p-4 bg-[#FFF9F5] border border-[#F3D1C2] text-[#C8532C] text-xs font-mono rounded-sm flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{submitError}</span>
+          <div>
+            <strong className="block font-bold">Case Creation Notice:</strong>
+            <p className="font-sans text-xs mt-0.5">{submitError}</p>
+          </div>
         </div>
       )}
 
-      {/* STAGE 1: BRAND, MODEL, STORAGE */}
+      {/* STAGE 1: PHONE DISCOVERY & SPECIFICATION */}
       {activeStage === 1 && (
-        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-7 shadow-xs">
           <div className="space-y-1">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
-              01 / Select Exact Phone Model &amp; Storage
+            <h2 className="font-serif text-2xl font-bold text-[#141413]">
+              01 / Identify Your Exact Smartphone
             </h2>
-            <p className="text-xs text-[#5A574F]">
-              Hardware buyback quotes depend heavily on processor generation, NAND storage capacity, and secondary market demand.
+            <p className="text-xs sm:text-sm text-[#5A574F] font-sans">
+              Choose your brand and model. Resale pricing varies heavily by processor generation and NAND storage size.
             </p>
           </div>
 
-          {/* Brand Selector */}
+          {/* Model Search Typeahead */}
           <div className="space-y-2">
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
-              Manufacturer / Brand:
+            <label htmlFor="model-search" className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+              Quick Search Model:
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 font-mono text-xs">
-              {PHONE_BRANDS.map((brand) => (
+            <div className="relative">
+              <input
+                id="model-search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Type to find e.g. iPhone 13, Galaxy S24, OnePlus 11..."
+                className="w-full text-sm font-sans bg-[#FAF9F5] border border-[#D5D0C5] rounded-sm p-3 pl-10 text-[#141413] placeholder-[#8E8B82] focus:outline-none focus:border-[#1B3B2B] focus:ring-1 focus:ring-[#1B3B2B]"
+              />
+              <Search className="w-4 h-4 text-[#8E8B82] absolute left-3.5 top-3.5" />
+              {searchQuery && (
                 <button
-                  key={brand}
                   type="button"
-                  onClick={() => handleBrandChange(brand)}
-                  className={`p-3 text-center border rounded-sm font-semibold transition-all ${
-                    selectedBrand === brand
-                      ? "bg-[#141413] text-white border-[#141413] shadow-xs"
-                      : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:border-[#141413] hover:text-[#141413]"
-                  }`}
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-3 text-xs font-mono text-[#8E8B82] hover:text-[#141413]"
                 >
-                  {brand}
+                  Clear
                 </button>
-              ))}
+              )}
             </div>
           </div>
 
-          {/* Model Selector */}
-          <div className="space-y-2">
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
-              Exact Model ({selectedBrand}):
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 font-mono text-xs">
-              {availableModels.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => handleModelChange(m.id)}
-                  className={`p-3 text-left border rounded-sm transition-all flex items-center justify-between ${
-                    activeModel.id === m.id
-                      ? "bg-[#1B3B2B] text-white border-[#1B3B2B] shadow-xs"
-                      : "bg-[#FAF9F5] text-[#141413] border-[#E5E0D8] hover:border-[#1B3B2B]"
-                  }`}
-                >
-                  <span className="font-semibold">{m.name}</span>
-                  <span className="text-[10px] opacity-75">{m.releaseYear}</span>
-                </button>
-              ))}
+          {/* Brand Filter Tabs (Shown when not searching) */}
+          {!searchQuery && (
+            <div className="space-y-2">
+              <span className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+                Filter by Brand:
+              </span>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 font-mono text-xs">
+                {PHONE_BRANDS.map((brand) => (
+                  <button
+                    key={brand}
+                    type="button"
+                    onClick={() => handleBrandChange(brand)}
+                    className={`py-2.5 px-3 text-center border rounded-sm font-semibold transition-all min-h-[44px] flex items-center justify-center ${
+                      selectedBrand === brand
+                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] shadow-xs"
+                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:border-[#141413] hover:text-[#141413]"
+                    }`}
+                  >
+                    {brand}
+                  </button>
+                ))}
+              </div>
             </div>
+          )}
+
+          {/* Available Models Grid */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+                {searchQuery ? `Matching Models (${availableModels.length}):` : `${selectedBrand} Models:`}
+              </span>
+              <span className="text-[11px] font-mono text-[#8E8B82]">Tap to select</span>
+            </div>
+
+            {availableModels.length === 0 ? (
+              <div className="p-8 text-center bg-[#FAF9F5] border border-dashed border-[#D5D0C5] rounded-sm text-xs font-mono text-[#5A574F]">
+                No models match &quot;{searchQuery}&quot;. Clear search to browse by brand catalog.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 font-mono text-xs">
+                {availableModels.map((m) => {
+                  const isSelected = activeModel.id === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => handleModelChange(m.id)}
+                      className={`p-3.5 text-left border rounded-sm transition-all flex items-center justify-between min-h-[52px] ${
+                        isSelected
+                          ? "bg-[#FAF8F3] border-[#1B3B2B] ring-2 ring-[#1B3B2B]/20 text-[#141413] shadow-xs"
+                          : "bg-[#FAF9F5] text-[#141413] border-[#E5E0D8] hover:border-[#141413]"
+                      }`}
+                    >
+                      <div className="space-y-0.5">
+                        <strong className="block text-xs font-semibold">{m.name}</strong>
+                        <span className="text-[10px] text-[#736F66]">
+                          {m.brand} · {m.releaseYear}
+                        </span>
+                      </div>
+                      {isSelected && (
+                        <div className="w-5 h-5 rounded-full bg-[#1B3B2B] text-white flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Storage Capacity Selector */}
-          <div className="space-y-2 pt-2 border-t border-[#E5E0D8]">
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
-              On-Board Storage Capacity:
-            </label>
+          <div className="space-y-2 pt-3 border-t border-[#E5E0D8]">
+            <span className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+              Storage Capacity ({activeModel.name}):
+            </span>
             <div className="flex flex-wrap gap-2 font-mono text-xs">
-              {activeModel.storageOptions.map((storage) => (
-                <button
-                  key={storage}
-                  type="button"
-                  onClick={() => setSelectedStorage(storage)}
-                  className={`px-4 py-2 border rounded-sm font-semibold transition-all ${
-                    selectedStorage === storage
-                      ? "bg-[#141413] text-white border-[#141413]"
-                      : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:border-[#141413] hover:text-[#141413]"
-                  }`}
-                >
-                  {storage}
-                </button>
-              ))}
+              {activeModel.storageOptions.map((storage) => {
+                const isSelected = selectedStorage === storage;
+                return (
+                  <button
+                    key={storage}
+                    type="button"
+                    onClick={() => setSelectedStorage(storage)}
+                    className={`px-4 py-2.5 border rounded-sm font-semibold transition-all min-h-[44px] ${
+                      isSelected
+                        ? "bg-[#141413] text-white border-[#141413] shadow-xs"
+                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:border-[#141413] hover:text-[#141413]"
+                    }`}
+                  >
+                    {storage}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -386,7 +480,7 @@ export function PhoneResaleWorkflow() {
             <button
               type="button"
               onClick={() => setActiveStage(2)}
-              className="px-6 py-3 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
             >
               <span>Continue to Condition Diagnostic</span>
               <ArrowRight className="w-4 h-4" />
@@ -395,15 +489,15 @@ export function PhoneResaleWorkflow() {
         </div>
       )}
 
-      {/* STAGE 2: CONDITION & SPECIFIC FAULTS */}
+      {/* STAGE 2: CONDITION & HARDWARE FAULTS */}
       {activeStage === 2 && (
-        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-7 shadow-xs">
           <div className="space-y-1">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
+            <h2 className="font-serif text-2xl font-bold text-[#141413]">
               02 / Device Condition &amp; Hardware Faults
             </h2>
-            <p className="text-xs text-[#5A574F]">
-              Disclose realistic cosmetic and functional condition to avoid price drops during physical technician inspection.
+            <p className="text-xs sm:text-sm text-[#5A574F] font-sans">
+              Disclose realistic cosmetic and functional condition. Honest self-diagnosis guarantees that your locked quote matches what the technician offers during doorstep inspection.
             </p>
           </div>
 
@@ -421,29 +515,36 @@ export function PhoneResaleWorkflow() {
                   key={condKey}
                   type="button"
                   onClick={() => setSelectedCondition(condKey)}
-                  className={`p-4 border rounded-sm text-left transition-all relative ${
+                  className={`p-4 border rounded-sm text-left transition-all relative flex flex-col justify-between ${
                     isSelected
                       ? "bg-[#FAF8F3] border-[#1B3B2B] ring-2 ring-[#1B3B2B]/20 shadow-xs"
                       : "bg-[#FAF9F5] border-[#E5E0D8] hover:border-[#BDB9AE]"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5 font-mono text-[11px]">
-                    <span className="font-bold uppercase tracking-wider text-[#141413]">
-                      {condDef.label}
-                    </span>
-                    <span className="text-[10px] text-[#8E8B82]">
-                      {condDef.factor > 0 ? `${Math.round(condDef.factor * 100)}% base` : "Safety lock"}
-                    </span>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5 font-mono text-[11px]">
+                      <span className="font-bold uppercase tracking-wider text-[#141413]">
+                        {condDef.label}
+                      </span>
+                      <span className="text-[10px] text-[#736F66]">
+                        {condDef.factor > 0 ? `${Math.round(condDef.factor * 100)}% base` : "Safety lock"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#5A574F] leading-relaxed font-sans">
+                      {condDef.description}
+                    </p>
                   </div>
-                  <p className="text-xs text-[#5A574F] leading-relaxed font-sans">
-                    {condDef.description}
-                  </p>
+
+                  <div className="pt-3 mt-3 border-t border-[#EFECE2] flex items-center justify-between text-[10px] font-mono">
+                    <span className="text-[#8E8B82]">Inspection grading</span>
+                    {isSelected && <span className="text-[#1B3B2B] font-bold">Selected ✓</span>}
+                  </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Hazardous Warning Banner if selected */}
+          {/* Hazardous Warning Banner */}
           {selectedCondition === "hazardous" && (
             <div className="p-4 bg-[#FFF0E8] border-2 border-[#C8532C] rounded-sm text-xs text-[#141413] space-y-2 font-mono">
               <div className="flex items-center gap-2 font-bold text-[#C8532C]">
@@ -457,12 +558,16 @@ export function PhoneResaleWorkflow() {
             </div>
           )}
 
-          {/* Specific Faults Checklist (if not flawless and not hazardous) */}
+          {/* Specific Faults Checklist */}
           {selectedCondition !== "flawless" && selectedCondition !== "hazardous" && (
             <div className="space-y-3 pt-3 border-t border-[#E5E0D8]">
-              <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
-                Specific Faults Present (Check all that apply):
-              </label>
+              <div className="flex items-center justify-between">
+                <span className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+                  Specific Faults Present (Check all that apply):
+                </span>
+                <span className="text-[11px] font-mono text-[#8E8B82]">Deductions pre-calculated</span>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs">
                 {COMMON_PHONE_FAULTS.map((fault) => {
                   const isChecked = selectedFaults.includes(fault.id);
@@ -471,22 +576,22 @@ export function PhoneResaleWorkflow() {
                       key={fault.id}
                       type="button"
                       onClick={() => toggleFault(fault.id)}
-                      className={`p-3 border rounded-sm text-left transition-all flex items-start justify-between gap-3 ${
+                      className={`p-3.5 border rounded-sm text-left transition-all flex items-start justify-between gap-3 min-h-[52px] ${
                         isChecked
-                          ? "bg-[#FFF9F5] border-[#C8532C] text-[#141413]"
+                          ? "bg-[#FFF9F5] border-[#C8532C] text-[#141413] shadow-2xs"
                           : "bg-[#FAF9F5] border-[#E5E0D8] text-[#5A574F] hover:border-[#141413]"
                       }`}
                     >
-                      <div>
-                        <strong className="block font-semibold text-xs mb-0.5">
+                      <div className="space-y-0.5">
+                        <strong className="block font-semibold text-xs text-[#141413]">
                           {fault.label}
                         </strong>
-                        <span className="text-[11px] text-[#736F66] font-sans block">
+                        <span className="text-[11px] text-[#736F66] font-sans block leading-normal">
                           {fault.description}
                         </span>
                       </div>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-sm shrink-0 ${
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 ${
                           isChecked
                             ? "bg-[#C8532C] text-white"
                             : "bg-[#E5E0D8] text-[#5A574F]"
@@ -501,13 +606,13 @@ export function PhoneResaleWorkflow() {
 
               {/* Repair vs Sell preview hint if faults selected */}
               {selectedFaults.length > 0 && (
-                <div className="p-3 bg-[#FAF8F3] border border-[#D5D0C5] rounded-sm text-xs font-mono flex items-start gap-2.5">
+                <div className="p-3.5 bg-[#FAF8F3] border border-[#D5D0C5] rounded-sm text-xs font-mono flex items-start gap-2.5">
                   <Wrench className="w-4 h-4 text-[#257A72] shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <strong className="text-[#141413] block">
+                    <strong className="text-[#141413] block font-bold">
                       Repair vs. Sell Economic Comparison Available:
                     </strong>
-                    <p className="text-[#5A574F] font-sans text-xs">
+                    <p className="text-[#5A574F] font-sans text-xs leading-relaxed">
                       You have selected {selectedFaults.length} hardware fault{selectedFaults.length > 1 ? "s" : ""}.
                       In Step 04, our transparent comparison matrix will evaluate whether fixing these faults in Delhi before selling produces a higher net cash return.
                     </p>
@@ -518,18 +623,19 @@ export function PhoneResaleWorkflow() {
           )}
 
           {/* Stepper Buttons */}
-          <div className="pt-4 border-t border-[#E5E0D8] flex items-center justify-between">
+          <div className="pt-4 border-t border-[#E5E0D8] flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setActiveStage(1)}
-              className="px-4 py-2 border border-[#E5E0D8] bg-[#FAF9F5] hover:bg-white text-xs font-mono text-[#5A574F] rounded-sm transition-colors"
+              className="px-4 py-2.5 border border-[#E5E0D8] bg-[#FAF9F5] hover:bg-white text-xs font-mono text-[#5A574F] rounded-sm transition-colors flex items-center gap-1.5"
             >
-              &larr; Back to Model
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Model</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveStage(3)}
-              className="px-6 py-3 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center gap-2"
+              className="px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center gap-2 shadow-xs"
             >
               <span>Continue to Accessories &amp; Pincode</span>
               <ArrowRight className="w-4 h-4" />
@@ -540,21 +646,21 @@ export function PhoneResaleWorkflow() {
 
       {/* STAGE 3: ACCESSORIES & LOCATION PINCODE */}
       {activeStage === 3 && (
-        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-8 space-y-7 shadow-xs">
           <div className="space-y-1">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
+            <h2 className="font-serif text-2xl font-bold text-[#141413]">
               03 / Original Accessories &amp; Service Pincode
             </h2>
-            <p className="text-xs text-[#5A574F]">
-              Providing the original purchase bill and retail box increases payout and dealer grading. Enter your Delhi pincode to verify free doorstep inspection.
+            <p className="text-xs sm:text-sm text-[#5A574F] font-sans">
+              Providing original purchase credentials increases payout. Enter your Delhi pincode to verify free doorstep technician inspection.
             </p>
           </div>
 
           {/* Accessories Checklist */}
           <div className="space-y-3">
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+            <span className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
               Included Original Accessories:
-            </label>
+            </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
               {(
                 Object.entries(ACCESSORY_VALUES) as [
@@ -568,20 +674,20 @@ export function PhoneResaleWorkflow() {
                     key={accKey}
                     type="button"
                     onClick={() => toggleAccessory(accKey)}
-                    className={`p-4 border rounded-sm text-left transition-all flex flex-col justify-between ${
+                    className={`p-4 border rounded-sm text-left transition-all flex flex-col justify-between min-h-[72px] ${
                       isChecked
-                        ? "bg-[#EDF5F0] border-[#1B3B2B] text-[#141413]"
+                        ? "bg-[#EDF5F0] border-[#1B3B2B] text-[#141413] shadow-2xs"
                         : "bg-[#FAF9F5] border-[#E5E0D8] text-[#5A574F] hover:border-[#141413]"
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <strong className="font-semibold text-xs">{accDef.label}</strong>
-                        <span className="text-[10px] font-bold text-[#1B3B2B] bg-[#C6DFD0] px-1.5 py-0.5 rounded-sm">
+                        <strong className="font-semibold text-xs text-[#141413]">{accDef.label}</strong>
+                        <span className="text-[10px] font-bold text-[#1B3B2B] bg-[#C6DFD0] px-1.5 py-0.5 rounded-xs">
                           +₹{accDef.bonusAmount}
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#5A574F] font-sans">{accDef.description}</p>
+                      <p className="text-[11px] text-[#5A574F] font-sans leading-normal">{accDef.description}</p>
                     </div>
                   </button>
                 );
@@ -591,12 +697,13 @@ export function PhoneResaleWorkflow() {
 
           {/* Location / Pincode Section */}
           <div className="space-y-3 pt-3 border-t border-[#E5E0D8]">
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
+            <label htmlFor="pincode-input" className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
               Delhi Service Pincode (Doorstep Pickup Verification):
             </label>
             <div className="max-w-md space-y-2">
               <div className="relative">
                 <input
+                  id="pincode-input"
                   type="text"
                   maxLength={6}
                   value={pincode}
@@ -617,15 +724,15 @@ export function PhoneResaleWorkflow() {
                   }`}
                 >
                   {isDelhi ? (
-                    <div className="flex items-start gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-[#1B3B2B]" />
                       <span>
                         <strong>Delhi Pilot Covered:</strong> {locality || "Documented Delhi NCT Area"} — Free doorstep technician pickup available.
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-start gap-1.5">
-                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-[#C8532C]" />
                       <span>
                         <strong>Non-Delhi Pincode:</strong> Pincode is outside Delhi pilot boundary. In-store kiosk drop-off available in Delhi, but doorstep courier is unconfirmed.
                       </span>
@@ -637,100 +744,128 @@ export function PhoneResaleWorkflow() {
           </div>
 
           {/* Stepper Buttons */}
-          <div className="pt-4 border-t border-[#E5E0D8] flex items-center justify-between">
+          <div className="pt-4 border-t border-[#E5E0D8] flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setActiveStage(2)}
-              className="px-4 py-2 border border-[#E5E0D8] bg-[#FAF9F5] hover:bg-white text-xs font-mono text-[#5A574F] rounded-sm transition-colors"
+              className="px-4 py-2.5 border border-[#E5E0D8] bg-[#FAF9F5] hover:bg-white text-xs font-mono text-[#5A574F] rounded-sm transition-colors flex items-center gap-1.5"
             >
-              &larr; Back to Condition
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Condition</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveStage(4)}
-              className="px-6 py-3 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center gap-2"
+              className="px-6 py-3.5 bg-[#1B3B2B] hover:bg-[#132A1F] text-white font-mono uppercase tracking-wider text-xs font-semibold rounded-sm transition-colors flex items-center gap-2 shadow-xs"
             >
-              <span>View Ranked Offers</span>
+              <span>View Ranked Resale Offers</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       )}
 
-      {/* STAGE 4: LIVE PROVIDER OFFER COMPARISON & TRANSPARENT RANKING */}
+      {/* STAGE 4: LIVE PROVIDER OFFER COMPARISON & DECISION SCREEN */}
       {activeStage === 4 && (
-        <div className="space-y-8">
-          {/* Diagnostic Breakdown Summary Card */}
-          <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-7 shadow-xs">
+        <div className="space-y-6">
+          {/* Top-Level Assessed Phone Dossier Banner */}
+          <div className="bg-white border border-[#E5E0D8] rounded-sm p-6 sm:p-7 shadow-xs space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E5E0D8]">
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#8E8B82] block">
-                  Assessed Hardware Specification
+                  Assessed Hardware Dossier
                 </span>
-                <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#141413]">
                   {valuation.assessmentSummary.deviceTitle}
                 </h2>
-                <span className="text-xs font-mono text-[#5A574F]">
-                  Grade: <strong className="text-[#141413]">{valuation.assessmentSummary.conditionLabel}</strong> &bull;
-                  Location: <strong className="text-[#141413]">{pincode || "Delhi"}</strong>
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mt-1 text-xs font-mono text-[#5A574F]">
+                  <span className="px-2 py-0.5 bg-[#FAF9F5] border border-[#E5E0D8] rounded-xs font-semibold text-[#141413]">
+                    {valuation.assessmentSummary.conditionLabel}
+                  </span>
+                  <span>&bull;</span>
+                  <span>Location: <strong className="text-[#141413]">{locality || pincode || "Delhi NCT"}</strong></span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 self-start sm:self-center">
+              <div className="flex items-center gap-2 self-start sm:self-center">
                 {repairVsSellAnalysis.hasFaultsToRepair && (
                   <button
                     type="button"
                     onClick={() => setStage4Tab(stage4Tab === "repair_vs_sell" ? "offers" : "repair_vs_sell")}
-                    className="inline-flex items-center gap-1.5 font-mono text-xs text-[#257A72] bg-[#E9F3F2] px-2.5 py-1 rounded-sm border border-[#C1DFDC] hover:bg-[#D5EAE8] transition-colors"
+                    className="inline-flex items-center gap-1.5 font-mono text-xs text-[#257A72] bg-[#E9F3F2] px-3 py-1.5 rounded-sm border border-[#C1DFDC] hover:bg-[#D5EAE8] transition-colors"
                   >
                     <Wrench className="w-3.5 h-3.5" />
-                    <span>{stage4Tab === "repair_vs_sell" ? "View Resale Offers" : "Repair vs. Sell Matrix"}</span>
+                    <span>{stage4Tab === "repair_vs_sell" ? "Show Offers" : "Repair vs. Sell"}</span>
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => setActiveStage(1)}
-                  className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1B3B2B] hover:underline"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1B3B2B] hover:underline px-2 py-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Adjust Diagnostic</span>
+                  <span>Edit Diagnostic</span>
                 </button>
               </div>
             </div>
 
-            {/* Valuation Ledger Formula */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-4 font-mono text-xs">
-              <div className="bg-[#FAF9F5] p-3 rounded-sm border border-[#E5E0D8]">
-                <span className="text-[10px] text-[#8E8B82] uppercase block">Base Model Payout</span>
-                <strong className="text-sm text-[#141413]">₹{valuation.assessmentSummary.basePrice.toLocaleString()}</strong>
+            {/* Baseline Overview & Transparent Calculation Accordion */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+              <div className="flex items-center gap-2">
+                <span className="text-[#736F66]">Net Realistic Baseline:</span>
+                <strong className="text-base text-[#1B3B2B] font-bold">
+                  ₹{valuation.assessmentSummary.estimatedNetBaseline.toLocaleString()}
+                </strong>
+                <span className="text-[11px] text-[#8E8B82] hidden md:inline">
+                  (Pre-factored deductions for declared faults)
+                </span>
               </div>
-              <div className="bg-[#FAF9F5] p-3 rounded-sm border border-[#E5E0D8]">
-                <span className="text-[10px] text-[#8E8B82] uppercase block">Condition Multiplier</span>
-                <strong className="text-sm text-[#141413]">{Math.round(valuation.assessmentSummary.conditionFactor * 100)}%</strong>
-              </div>
-              <div className="bg-[#FAF9F5] p-3 rounded-sm border border-[#E5E0D8]">
-                <span className="text-[10px] text-[#8E8B82] uppercase block">Fault Deductions</span>
-                <strong className="text-sm text-[#C8532C]">-₹{valuation.assessmentSummary.faultDeductionTotal.toLocaleString()}</strong>
-              </div>
-              <div className="bg-[#FAF9F5] p-3 rounded-sm border border-[#E5E0D8]">
-                <span className="text-[10px] text-[#8E8B82] uppercase block">Accessories Bonus</span>
-                <strong className="text-sm text-[#1B3B2B]">+₹{valuation.assessmentSummary.accessoryBonusTotal.toLocaleString()}</strong>
-              </div>
-              <div className="bg-[#EDF5F0] p-3 rounded-sm border border-[#C6DFD0] col-span-2 sm:col-span-1">
-                <span className="text-[10px] text-[#1B3B2B] uppercase font-bold block">Net Realistic Baseline</span>
-                <strong className="text-base text-[#1B3B2B]">₹{valuation.assessmentSummary.estimatedNetBaseline.toLocaleString()}</strong>
-              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowFormulaBreakdown(!showFormulaBreakdown)}
+                className="inline-flex items-center gap-1 text-[11px] text-[#5A574F] hover:text-[#141413] underline self-start sm:self-auto"
+              >
+                <span>{showFormulaBreakdown ? "Hide formula calculation" : "How this baseline is calculated"}</span>
+                {showFormulaBreakdown ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
             </div>
+
+            {/* Collapsible Formula Breakdown */}
+            {showFormulaBreakdown && (
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-3 border-t border-[#E5E0D8] font-mono text-xs">
+                <div className="bg-[#FAF9F5] p-2.5 rounded-xs border border-[#E5E0D8]">
+                  <span className="text-[10px] text-[#8E8B82] uppercase block">Base Price</span>
+                  <strong className="text-xs text-[#141413]">₹{valuation.assessmentSummary.basePrice.toLocaleString()}</strong>
+                </div>
+                <div className="bg-[#FAF9F5] p-2.5 rounded-xs border border-[#E5E0D8]">
+                  <span className="text-[10px] text-[#8E8B82] uppercase block">Condition Multiplier</span>
+                  <strong className="text-xs text-[#141413]">{Math.round(valuation.assessmentSummary.conditionFactor * 100)}%</strong>
+                </div>
+                <div className="bg-[#FAF9F5] p-2.5 rounded-xs border border-[#E5E0D8]">
+                  <span className="text-[10px] text-[#8E8B82] uppercase block">Fault Deductions</span>
+                  <strong className="text-xs text-[#C8532C]">-₹{valuation.assessmentSummary.faultDeductionTotal.toLocaleString()}</strong>
+                </div>
+                <div className="bg-[#FAF9F5] p-2.5 rounded-xs border border-[#E5E0D8]">
+                  <span className="text-[10px] text-[#8E8B82] uppercase block">Accessories</span>
+                  <strong className="text-xs text-[#1B3B2B]">+₹{valuation.assessmentSummary.accessoryBonusTotal.toLocaleString()}</strong>
+                </div>
+                <div className="bg-[#EDF5F0] p-2.5 rounded-xs border border-[#C6DFD0] col-span-2 sm:col-span-1">
+                  <span className="text-[10px] text-[#1B3B2B] uppercase font-bold block">Baseline</span>
+                  <strong className="text-sm text-[#1B3B2B]">₹{valuation.assessmentSummary.estimatedNetBaseline.toLocaleString()}</strong>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Hazardous Safety Callout if Applicable */}
           {valuation.isHazardous && valuation.hazardDirective && (
-            <div className="bg-[#FFF0E8] border-2 border-[#C8532C] rounded-sm p-6 sm:p-8 space-y-4 shadow-xs">
+            <div className="bg-[#FFF0E8] border-2 border-[#C8532C] rounded-sm p-6 sm:p-7 space-y-3 shadow-xs">
               <div className="flex items-center gap-2 font-mono text-sm font-bold text-[#C8532C]">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <span>{valuation.hazardDirective.headline}</span>
               </div>
-              <p className="text-xs sm:text-sm text-[#141413] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#141413] leading-relaxed font-sans">
                 {valuation.hazardDirective.warningText}
               </p>
               <div className="space-y-1 text-xs font-mono text-[#5A574F]">
@@ -744,7 +879,7 @@ export function PhoneResaleWorkflow() {
             </div>
           )}
 
-          {/* Stage 4 Sub-Tabs: Offers vs Repair-vs-Sell Matrix */}
+          {/* Sub-Navigation Tabs: Offers vs Repair-vs-Sell Matrix */}
           <div className="flex border-b border-[#E5E0D8] space-x-2">
             <button
               type="button"
@@ -782,7 +917,7 @@ export function PhoneResaleWorkflow() {
             </button>
           </div>
 
-          {/* Tab Content: Repair vs. Sell Comparison */}
+          {/* TAB 1: REPAIR VS SELL MATRIX */}
           {stage4Tab === "repair_vs_sell" && (
             <RepairVsSellCard
               analysis={repairVsSellAnalysis}
@@ -790,29 +925,28 @@ export function PhoneResaleWorkflow() {
             />
           )}
 
-          {/* Tab Content: Provider Offers Grid */}
+          {/* TAB 2: RANKED RESALE OFFERS */}
           {stage4Tab === "offers" && (
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E0D8]">
+            <div className="space-y-5">
+              {/* Filter & Sorting Segmented Control Bar */}
+              <div className="bg-white border border-[#E5E0D8] rounded-sm p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-[#141413]">
-                    Verified Resale Offers ({valuation.offers.length})
-                  </h3>
-                  <span className="text-[#8E8B82] font-mono text-[11px] block mt-0.5">
+                  <span className="text-[11px] font-mono text-[#8E8B82] uppercase tracking-wider block">
+                    Sorting Rationale:
+                  </span>
+                  <span className="text-xs font-mono text-[#141413] font-medium">
                     {valuation.rankingExplanation}
                   </span>
                 </div>
 
-                {/* Ranking Mode Switcher */}
-                <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
-                  <span className="text-[10px] uppercase text-[#8E8B82] mr-1">Sort:</span>
+                <div className="flex items-center gap-1 bg-[#FAF9F5] p-1 rounded-sm border border-[#E5E0D8] self-start sm:self-auto font-mono text-xs">
                   <button
                     type="button"
                     onClick={() => setRankingMode("highest_cash")}
-                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                    className={`px-3 py-1.5 rounded-xs transition-colors ${
                       rankingMode === "highest_cash"
-                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
-                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
+                        ? "bg-[#1B3B2B] text-white font-semibold shadow-xs"
+                        : "text-[#5A574F] hover:text-[#141413]"
                     }`}
                   >
                     Highest Cash
@@ -820,10 +954,10 @@ export function PhoneResaleWorkflow() {
                   <button
                     type="button"
                     onClick={() => setRankingMode("most_convenient")}
-                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                    className={`px-3 py-1.5 rounded-xs transition-colors ${
                       rankingMode === "most_convenient"
-                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
-                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
+                        ? "bg-[#1B3B2B] text-white font-semibold shadow-xs"
+                        : "text-[#5A574F] hover:text-[#141413]"
                     }`}
                   >
                     Most Convenient
@@ -831,10 +965,10 @@ export function PhoneResaleWorkflow() {
                   <button
                     type="button"
                     onClick={() => setRankingMode("most_certain")}
-                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                    className={`px-3 py-1.5 rounded-xs transition-colors ${
                       rankingMode === "most_certain"
-                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
-                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
+                        ? "bg-[#1B3B2B] text-white font-semibold shadow-xs"
+                        : "text-[#5A574F] hover:text-[#141413]"
                     }`}
                   >
                     Most Certain
@@ -842,193 +976,193 @@ export function PhoneResaleWorkflow() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
+              {/* Offer Cards Stream */}
+              <div className="space-y-4">
                 {valuation.offers.map((offer) => {
                   const isPrimary = offer.rankingPosition === 1 && !valuation.isHazardous;
+                  const offerKey = `${offer.providerSlug}-${offer.offerType}`;
+                  const isExpanded = !!expandedOffers[offerKey];
 
                   return (
-                    <div
-                      key={`${offer.providerSlug}-${offer.offerType}`}
-                      className={`bg-white rounded-sm border transition-all p-6 sm:p-7 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6 ${
+                    <article
+                      key={offerKey}
+                      className={`bg-white rounded-sm border transition-all p-5 sm:p-6 shadow-xs space-y-4 ${
                         isPrimary
-                          ? "border-[#1B3B2B] ring-2 ring-[#1B3B2B]/20"
+                          ? "border-[#1B3B2B] ring-2 ring-[#1B3B2B]/15"
                           : "border-[#E5E0D8] hover:border-[#BDB9AE]"
                       }`}
                     >
-                      {/* Left Offer Details Column */}
-                      <div className="space-y-3.5 flex-1">
-                        {/* Top Tag Strip */}
-                        <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
-                          <span
-                            className={`px-2 py-0.5 rounded-sm font-bold ${
-                              isPrimary
-                                ? "bg-[#1B3B2B] text-white"
-                                : "bg-[#FAF9F5] text-[#5A574F] border border-[#E5E0D8]"
-                            }`}
-                          >
-                            {offer.rankingReason}
-                          </span>
+                      {/* Top Row: Provider Identity & Payout */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div className="space-y-1.5 flex-1">
+                          <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+                            <span
+                              className={`px-2 py-0.5 rounded-xs font-bold ${
+                                isPrimary
+                                  ? "bg-[#1B3B2B] text-white"
+                                  : "bg-[#FAF9F5] text-[#5A574F] border border-[#E5E0D8]"
+                              }`}
+                            >
+                              {offer.rankingReason}
+                            </span>
 
-                          {/* Financial Type Badge: Distinguish Cash from Vouchers */}
-                          <span
-                            className={`px-2 py-0.5 rounded-sm font-semibold border ${
-                              offer.financialType === "cash"
-                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
+                            {/* Payment medium pill */}
+                            <span
+                              className={`px-2 py-0.5 rounded-xs font-semibold border ${
+                                offer.financialType === "cash"
+                                  ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
+                                  : offer.financialType === "voucher"
+                                  ? "bg-[#FEF7ED] text-[#8C5E28] border-[#E8DCBF]"
+                                  : offer.financialType === "trade_in_credit"
+                                  ? "bg-[#E9F3F2] text-[#257A72] border-[#C1DFDC]"
+                                  : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
+                              }`}
+                            >
+                              {offer.financialType === "cash"
+                                ? "Liquid Bank Cash"
                                 : offer.financialType === "voucher"
-                                ? "bg-[#FFF9F5] text-[#8C5E28] border-[#E8DCBF]"
+                                ? "Store Voucher (Non-Cash)"
                                 : offer.financialType === "trade_in_credit"
-                                ? "bg-[#E9F3F2] text-[#257A72] border-[#C1DFDC]"
-                                : offer.financialType === "free_disposal"
-                                ? "bg-[#FFF0E8] text-[#C8532C] border-[#F2C2B2]"
-                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
-                            }`}
-                          >
-                            {offer.financialType === "cash"
-                              ? "Direct Bank Cash"
-                              : offer.financialType === "voucher"
-                              ? "Store Voucher (Non-Cash)"
-                              : offer.financialType === "trade_in_credit"
-                              ? "Apple Trade-In Credit"
-                              : offer.financialType === "free_disposal"
-                              ? "Hazardous Recovery"
-                              : "P2P Buyer Cash"}
-                          </span>
+                                ? "Apple Trade-In Credit"
+                                : "Free Certified Recycling"}
+                            </span>
+                          </div>
 
-                          {/* Quote Status Badge */}
-                          <span
-                            className={`px-2 py-0.5 rounded-sm font-semibold border ${
-                              offer.quoteStatus === "published_price"
-                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
-                                : offer.quoteStatus === "confirmed_diagnostic_quote"
-                                ? "bg-[#E9F3F2] text-[#257A72] border-[#C1DFDC]"
-                                : offer.quoteStatus === "expired_stale_estimate"
-                                ? "bg-[#FFF9F5] text-[#C8532C] border-[#F3D1C2]"
-                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
-                            }`}
-                          >
-                            {offer.quoteStatusLabel}
-                          </span>
-
-                          {/* Explicit Pickup / Logistics Badge */}
-                          <span
-                            className={`px-2 py-0.5 rounded-sm border ${
-                              offer.pickupBadgeStatus === "pickup_confirmed"
-                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0] font-semibold"
-                                : offer.pickupBadgeStatus === "not_available_pincode"
-                                ? "bg-[#FFF9F5] text-[#C8532C] border-[#F3D1C2]"
-                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
-                            }`}
-                          >
-                            {offer.pickupBadgeLabel}
-                          </span>
-                        </div>
-
-                        {/* Provider Title & Payment Mode */}
-                        <div>
-                          <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
+                          <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
                             {offer.providerName}
-                          </h4>
-                          <span className="font-mono text-xs text-[#5A574F] block mt-0.5">
+                          </h3>
+
+                          <span className="text-xs font-mono text-[#5A574F] block">
                             Settlement: <strong className="text-[#141413]">{offer.paymentMethod}</strong>
                           </span>
                         </div>
 
-                        {/* Quote Basis & Provenance */}
-                        <div className="text-[11px] font-mono text-[#6B675E] bg-[#F7F5EE] p-2.5 rounded-xs border border-[#DFD9CD]">
-                          <strong className="text-[#141413] uppercase text-[10px] block mb-0.5">
-                            Quote Basis:
-                          </strong>
-                          <span>{offer.quoteBasis}</span>
-                        </div>
-
-                        {/* Inspection Deductions Policy (Strict Transparency) */}
-                        <div className="bg-[#FAF9F5] rounded-sm p-4 border border-[#E5E0D8] text-xs font-mono space-y-2">
-                          <div>
-                            <strong className="text-[#141413] uppercase text-[10px] block mb-0.5">
-                              Inspection &amp; Deduction Policy:
-                            </strong>
-                            <p className="text-[#5A574F] font-sans text-xs leading-relaxed">
-                              {offer.inspectionDeductionsPolicy}
-                            </p>
-                          </div>
-                          <div className="pt-2 border-t border-[#E5E0D8] flex flex-wrap gap-4 text-[11px] text-[#736F66]">
-                            <span>
-                              <strong>Pickup:</strong> {offer.pickupDetails}
-                            </span>
-                            <span>
-                              <strong>Drop-off:</strong> {offer.dropoffDetails}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Audit Evidence Link */}
-                        <div className="flex items-center gap-3 font-mono text-[11px] text-[#8E8B82]">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-[#8E8B82]" />
-                            Verified: {offer.lastVerifiedDate}
+                        {/* Payout Display */}
+                        <div className="sm:text-right shrink-0 font-mono space-y-0.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#EFECE2]">
+                          <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block">
+                            {offer.financialType === "voucher" ? "Store Voucher Value" : "Estimated Net Cash"}
                           </span>
+                          <div className="flex sm:justify-end items-baseline gap-1">
+                            <span className="text-sm font-sans font-medium text-[#141413]">₹</span>
+                            <strong className="text-3xl sm:text-4xl font-serif font-bold text-[#141413]">
+                              {offer.estimatedNetPayout.toLocaleString()}
+                            </strong>
+                          </div>
+                          <span className="text-[11px] text-[#736F66] block">
+                            Expected: ₹{offer.priceRange.min.toLocaleString()} – ₹{offer.priceRange.max.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 3 Core Decision Factors Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-[#E5E0D8] font-mono text-xs">
+                        {/* Factor 1: Quote Semantics */}
+                        <div className="bg-[#FAF9F5] p-3 rounded-xs border border-[#E5E0D8] space-y-1">
+                          <span className="text-[10px] text-[#8E8B82] uppercase block">Quote Status</span>
+                          <div className="flex items-center gap-1.5 font-semibold text-[#141413]">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#257A72]" />
+                            <span>{offer.quoteStatusLabel}</span>
+                          </div>
+                        </div>
+
+                        {/* Factor 2: Logistics / Doorstep */}
+                        <div className="bg-[#FAF9F5] p-3 rounded-xs border border-[#E5E0D8] space-y-1">
+                          <span className="text-[10px] text-[#8E8B82] uppercase block">Pickup / Drop-off</span>
+                          <div className="flex items-center gap-1.5 font-semibold text-[#141413]">
+                            <Truck className="w-3.5 h-3.5 text-[#1B3B2B]" />
+                            <span className="truncate">{offer.pickupBadgeLabel}</span>
+                          </div>
+                        </div>
+
+                        {/* Factor 3: Inspection Policy Risk */}
+                        <div className="bg-[#FAF9F5] p-3 rounded-xs border border-[#E5E0D8] space-y-1">
+                          <span className="text-[10px] text-[#8E8B82] uppercase block">Inspection Terms</span>
+                          <div className="flex items-center gap-1.5 text-[#5A574F]">
+                            <Info className="w-3.5 h-3.5 text-[#8E8B82]" />
+                            <span className="truncate">{offer.inspectionDeductionsPolicy.slice(0, 38)}...</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Row */}
+                      <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleOfferDisclosure(offerKey)}
+                          className="inline-flex items-center gap-1.5 text-xs font-mono text-[#5A574F] hover:text-[#141413] self-start sm:self-auto py-1"
+                        >
+                          <span>{isExpanded ? "Hide inspection policy & audit source" : "View inspection policy & audit source"}</span>
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+
+                        <div className="flex items-center gap-2">
                           {offer.evidenceUrl && (
                             <a
                               href={offer.evidenceUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[#1B3B2B] hover:underline"
+                              className="px-3 py-2.5 border border-[#D5D0C5] bg-[#FAF9F5] hover:bg-white text-xs font-mono text-[#5A574F] rounded-sm transition-colors flex items-center gap-1"
                             >
-                              <span>Evidence Source</span>
+                              <span>Official Site</span>
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           )}
+
+                          <button
+                            type="button"
+                            disabled={isSubmitting || !offer.isEligible}
+                            onClick={() => handleSelectOffer(offer)}
+                            className={`px-5 py-2.5 font-mono uppercase tracking-wider font-semibold rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 min-h-[44px] ${
+                              isPrimary
+                                ? "bg-[#1B3B2B] hover:bg-[#132A1F] text-white"
+                                : "bg-[#141413] hover:bg-[#2B2B28] text-white"
+                            }`}
+                          >
+                            {isSubmitting ? (
+                              <span>Creating Case...</span>
+                            ) : (
+                              <>
+                                <span>Lock Quote &amp; Track Case</span>
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
 
-                      {/* Right Action & Payout Column */}
-                      <div className="md:w-64 shrink-0 flex flex-col justify-between pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-[#E5E0D8] md:pl-6 space-y-4 font-mono">
-                        <div>
-                          <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block mb-0.5">
-                            {offer.financialType === "voucher"
-                              ? "Estimated Store Credit Voucher"
-                              : offer.financialType === "trade_in_credit"
-                              ? "Estimated Trade-In Credit"
-                              : "Estimated Net Cash Payout"}
-                          </span>
-                          <div className="flex items-baseline gap-1">
-                            <strong className="text-3xl sm:text-4xl font-serif font-bold text-[#141413]">
-                              ₹{offer.estimatedNetPayout.toLocaleString()}
-                            </strong>
+                      {/* Expandable Disclosure Details */}
+                      {isExpanded && (
+                        <div className="p-4 bg-[#F7F5EE] border border-[#DFD9CD] rounded-xs font-mono text-xs space-y-3 pt-3 mt-2">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <strong className="text-[#141413] uppercase text-[10px] block mb-1">
+                                Physical Inspection &amp; Deductions:
+                              </strong>
+                              <p className="font-sans text-xs text-[#5A574F] leading-relaxed">
+                                {offer.inspectionDeductionsPolicy}
+                              </p>
+                            </div>
+                            <div>
+                              <strong className="text-[#141413] uppercase text-[10px] block mb-1">
+                                Quote Basis &amp; Verification Date:
+                              </strong>
+                              <p className="font-sans text-xs text-[#5A574F] leading-relaxed">
+                                {offer.quoteBasis}
+                              </p>
+                              <div className="flex items-center gap-2 text-[11px] text-[#8E8B82] mt-1.5">
+                                <Calendar className="w-3 h-3" />
+                                <span>Audited: {offer.lastVerifiedDate}</span>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-[11px] text-[#736F66] block mt-0.5">
-                            Expected range: ₹{offer.priceRange.min.toLocaleString()} - ₹{offer.priceRange.max.toLocaleString()}
-                          </span>
-                          <span className="text-[10px] text-[#8E8B82] block mt-1 italic font-sans">
-                            Amount is pre-inspection estimate. Final settlement confirmed after diagnostic verification.
-                          </span>
+
+                          <div className="pt-2 border-t border-[#DFD9CD] flex flex-wrap gap-4 text-[11px] text-[#736F66]">
+                            <span><strong>Pickup:</strong> {offer.pickupDetails}</span>
+                            <span><strong>Drop-off:</strong> {offer.dropoffDetails}</span>
+                          </div>
                         </div>
-
-                        <button
-                          type="button"
-                          disabled={isSubmitting || !offer.isEligible}
-                          onClick={() => handleSelectOffer(offer)}
-                          className={`w-full py-3.5 px-4 font-mono uppercase tracking-wider font-semibold rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 ${
-                            isPrimary
-                              ? "bg-[#1B3B2B] hover:bg-[#132A1F] text-white"
-                              : "bg-[#141413] hover:bg-[#20201E] text-white"
-                          }`}
-                        >
-                          {isSubmitting ? (
-                            <span>Locking Quote...</span>
-                          ) : (
-                            <>
-                              <span>Select Offer &amp; Lock Quote</span>
-                              <ArrowUpRight className="w-3.5 h-3.5" />
-                            </>
-                          )}
-                        </button>
-
-                        <p className="text-[10px] text-[#8E8B82] leading-tight text-center">
-                          Creates an active recovery case docket. No registration or upfront fee required.
-                        </p>
-                      </div>
-                    </div>
+                      )}
+                    </article>
                   );
                 })}
               </div>

@@ -173,29 +173,29 @@ export function RepairVsSellCard({ analysis, onProceedToResale }: RepairVsSellCa
               </div>
             </div>
 
-            {/* Total Proceeds */}
-            <div className="pt-3 border-t border-[#E5E0D8]">
-              <div className="flex items-baseline justify-between">
+            {/* Total Proceeds vs Incremental Benefit */}
+            <div className="pt-3 border-t border-[#E5E0D8] space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                 <div>
-                  <span className="text-[10px] text-[#8E8B82] uppercase block">Net Proceeds After Repair</span>
+                  <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block">Total Net Cash in Hand</span>
                   <div className="text-3xl font-serif font-bold text-[#141413]">
                     ₹{repairThenSell.netProceedsAfterRepair.toLocaleString()}
                   </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] text-[#8E8B82] uppercase block">Incremental Gain</span>
+                <div className="sm:text-right bg-[#FAF8F3] p-2 rounded-xs border border-[#E5E0D8]">
+                  <span className="text-[10px] text-[#736F66] uppercase block font-semibold">Net Extra Advantage</span>
                   <span
-                    className={`text-sm font-bold ${
+                    className={`text-sm font-bold block ${
                       isBeneficial ? "text-[#1B3B2B]" : "text-[#C8532C]"
                     }`}
                   >
                     {economics.incrementalBenefitMid >= 0 ? "+" : ""}
-                    ₹{economics.incrementalBenefitMid.toLocaleString()}
+                    ₹{economics.incrementalBenefitMid.toLocaleString()} vs As-Is
                   </span>
                 </div>
               </div>
-              <span className="text-[11px] text-[#736F66] block mt-0.5">
-                Expected range: ₹{repairThenSell.netProceedsRange.min.toLocaleString()} - ₹{repairThenSell.netProceedsRange.max.toLocaleString()}
+              <span className="text-[11px] text-[#736F66] block">
+                Estimated range: ₹{repairThenSell.netProceedsRange.min.toLocaleString()} – ₹{repairThenSell.netProceedsRange.max.toLocaleString()}
               </span>
             </div>
           </div>
