@@ -9,6 +9,8 @@ export interface DeviceHardwareProfile {
   maxTouchPoints: number;
   cpuCores: number;
   estimatedRamGb: number | null;
+  ramDisplayLabel?: string;
+  heapLimitMb?: number | null;
   gpuRenderer: string;
   online: boolean;
   connectionType: string | null;

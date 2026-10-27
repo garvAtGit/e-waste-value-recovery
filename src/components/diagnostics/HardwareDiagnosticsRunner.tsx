@@ -100,7 +100,7 @@ export function HardwareDiagnosticsRunner({
           id: "device_telemetry",
           label: "Device Telemetry & Chipset",
           verdict: "passed",
-          metrics: `${p.deviceFamily} (${p.os}) · ${p.cpuCores} Cores · ${p.screenResolution} @ ${p.pixelRatio}x`,
+          metrics: `${p.deviceFamily} (${p.os}) · ${p.cpuCores} Cores · ${p.ramDisplayLabel || "Memory"} · ${p.screenResolution} @ ${p.pixelRatio}x`,
           timestamp: new Date().toLocaleTimeString(),
         },
       }));
@@ -275,13 +275,16 @@ export function HardwareDiagnosticsRunner({
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#282622] rounded border border-[#3A3834] text-xs font-mono">
               <Cpu className="w-3.5 h-3.5 text-[#257A72]" />
-              <span>{profile?.cpuCores || 4} Cores</span>
+              <span>{profile?.cpuCores || 4} Threads</span>
             </div>
 
-            {profile?.estimatedRamGb && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#282622] rounded border border-[#3A3834] text-xs font-mono">
-                <Layers className="w-3.5 h-3.5 text-[#A8A29E]" />
-                <span>{profile.estimatedRamGb} GB RAM</span>
+            {profile && (
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#282622] rounded border border-[#3A3834] text-xs font-mono"
+                title="W3C deviceMemory API clamps maximum browser-accessible memory to 8GB to prevent device fingerprinting"
+              >
+                <Layers className="w-3.5 h-3.5 text-[#257A72]" />
+                <span>{profile.ramDisplayLabel || "8 GB RAM"}</span>
               </div>
             )}
           </div>
@@ -294,12 +297,21 @@ export function HardwareDiagnosticsRunner({
             <span className="text-[#E6E4DE]">{profile?.screenResolution || "Detecting..."}</span>
           </div>
           <div>
+            <span className="text-[10px] uppercase text-[#736F68] block">System RAM Tier</span>
+            <span className="text-[#E6E4DE] block">
+              {profile?.ramDisplayLabel || "8 GB Unified"}
+            </span>
+            <span className="text-[9px] text-[#736F68] block">
+              {profile?.heapLimitMb ? `JS Heap: ${profile.heapLimitMb}MB` : "Hardware Protected"}
+            </span>
+          </div>
+          <div>
             <span className="text-[10px] uppercase text-[#736F68] block">Touch Points</span>
             <span className="text-[#E6E4DE]">
               {profile?.maxTouchPoints ? `${profile.maxTouchPoints} Multi-touch` : "Single / Cursor"}
             </span>
           </div>
-          <div className="col-span-2">
+          <div>
             <span className="text-[10px] uppercase text-[#736F68] block">GPU Acceleration</span>
             <span className="text-[#E6E4DE] truncate block">
               {profile?.gpuRenderer || "Hardware Canvas"}

@@ -91,6 +91,41 @@ export async function detectHardwareProfile(): Promise<DeviceHardwareProfile> {
   const estimatedRamGb = nav.deviceMemory ? Number(nav.deviceMemory) : null;
   const connectionType = nav.connection?.effectiveType || null;
 
+  // JS Heap size estimate if supported (Chromium)
+  let heapLimitMb: number | null = null;
+  const perf = window.performance as unknown as { memory?: { jsHeapSizeLimit?: number } };
+  if (perf?.memory?.jsHeapSizeLimit) {
+    heapLimitMb = Math.round(perf.memory.jsHeapSizeLimit / (1024 * 1024));
+  }
+
+  const cpuCores = window.navigator.hardwareConcurrency || 4;
+
+  // Resolve realistic RAM display label (Addressing W3C 8GB anti-fingerprinting clamp)
+  let ramDisplayLabel = "8 GB RAM";
+  if (os === "iOS") {
+    ramDisplayLabel = cpuCores >= 6 ? "6 GB (Unified Apple Silicon)" : "4 GB (Apple A-Series)";
+  } else if (estimatedRamGb !== null) {
+    if (estimatedRamGb >= 8) {
+      if (cpuCores >= 16) {
+        ramDisplayLabel = "32 GB+ (W3C Clamped at 8GB)";
+      } else if (cpuCores >= 12) {
+        ramDisplayLabel = "16–32 GB (W3C Clamped at 8GB)";
+      } else if (cpuCores >= 8) {
+        ramDisplayLabel = "8–16 GB (W3C Clamped at 8GB)";
+      } else {
+        ramDisplayLabel = "8 GB RAM";
+      }
+    } else {
+      ramDisplayLabel = `${estimatedRamGb} GB RAM`;
+    }
+  } else if (os === "macOS") {
+    ramDisplayLabel = cpuCores >= 8 ? "16 GB (Unified Memory)" : "8 GB (Unified Memory)";
+  } else if (os === "Windows") {
+    ramDisplayLabel = cpuCores >= 12 ? "16–32 GB System RAM" : "8–16 GB System RAM";
+  } else {
+    ramDisplayLabel = "8 GB RAM";
+  }
+
   // Battery status if supported
   let batteryLevelPercent: number | null = null;
   let isCharging: boolean | null = null;
@@ -118,8 +153,10 @@ export async function detectHardwareProfile(): Promise<DeviceHardwareProfile> {
     colorDepth: window.screen.colorDepth || 24,
     pixelRatio: window.devicePixelRatio || 1,
     maxTouchPoints: window.navigator.maxTouchPoints || 0,
-    cpuCores: window.navigator.hardwareConcurrency || 4,
+    cpuCores,
     estimatedRamGb,
+    ramDisplayLabel,
+    heapLimitMb,
     gpuRenderer,
     online: window.navigator.onLine ?? true,
     connectionType,

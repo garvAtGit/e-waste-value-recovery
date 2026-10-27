@@ -9,6 +9,7 @@ import {
   TrendingUp,
   AlertTriangle,
   ChevronRight,
+  Search,
 } from "lucide-react";
 import { getAllSalvageModels, evaluateComponentSalvage } from "../../lib/salvage/engine";
 
@@ -55,9 +56,19 @@ export default function SalvageValuationPage() {
     return Array.from(bSet);
   }, [models]);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const filteredModels = useMemo(() => {
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      return models.filter(
+        (m) =>
+          m.modelName.toLowerCase().includes(q) ||
+          m.brand.toLowerCase().includes(q)
+      );
+    }
     return models.filter((m) => m.brand === selectedBrand);
-  }, [models, selectedBrand]);
+  }, [models, selectedBrand, searchQuery]);
 
   return (
     <div className="min-h-screen bg-[#F4F1EA] text-[#141413] py-8 px-4 sm:px-6 lg:px-8">
@@ -95,31 +106,47 @@ export default function SalvageValuationPage() {
 
         {/* Brand & Model Selector */}
         <div className="bg-white rounded-xl border border-[#D5D0C5] p-5 shadow-2xs space-y-4">
-          <span className="text-xs font-mono uppercase text-[#736F68] font-bold block">
-            Step 1: Select Brand & Device Family
-          </span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span className="text-xs font-mono uppercase text-[#736F68] font-bold block">
+              Step 1: Select Brand & Device Family ({models.length} Models Catalogued)
+            </span>
 
-          {/* Brand Tabs */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {brands.map((b) => (
-              <button
-                key={b}
-                type="button"
-                onClick={() => {
-                  setSelectedBrand(b);
-                  const firstOfBrand = models.find((m) => m.brand === b);
-                  if (firstOfBrand) handleModelChange(firstOfBrand.modelId);
-                }}
-                className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all ${
-                  selectedBrand === b
-                    ? "bg-[#1B3B2B] text-white shadow-xs"
-                    : "bg-[#F7F5EE] text-[#5A5751] hover:bg-[#EAE6DC]"
-                }`}
-              >
-                {b}
-              </button>
-            ))}
+            {/* Quick Model Search */}
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-[#736F68] absolute left-2.5 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search 35+ phones..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#D5D0C5] text-xs font-sans placeholder:text-[#A8A29E]"
+              />
+            </div>
           </div>
+
+          {/* Brand Tabs (hidden when searching) */}
+          {!searchQuery && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {brands.map((b) => (
+                <button
+                  key={b}
+                  type="button"
+                  onClick={() => {
+                    setSelectedBrand(b);
+                    const firstOfBrand = models.find((m) => m.brand === b);
+                    if (firstOfBrand) handleModelChange(firstOfBrand.modelId);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all ${
+                    selectedBrand === b
+                      ? "bg-[#1B3B2B] text-white shadow-xs"
+                      : "bg-[#F7F5EE] text-[#5A5751] hover:bg-[#EAE6DC]"
+                  }`}
+                >
+                  {b}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Model Dropdown / Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2">
