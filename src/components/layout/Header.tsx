@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowUpRight, Cpu } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -42,8 +43,15 @@ function HeaderFallback() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-sm bg-[#1B3B2B] text-[#F7F5EE] flex items-center justify-center shrink-0 border border-[#142D21]">
-              <Cpu className="w-4 h-4 text-[#C1DFDC]" />
+            <div className="w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center shrink-0 border border-[#D5D0C5] bg-white shadow-2xs">
+              <Image
+                src="/logo.png"
+                alt="E-Waste Value Recovery Logo"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#141413] leading-none">
@@ -130,8 +138,15 @@ function HeaderInner() {
               href="/"
               className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B3B2B]"
             >
-              <div className="w-8 h-8 rounded-sm bg-[#1B3B2B] text-[#F7F5EE] flex items-center justify-center shrink-0 border border-[#142D21] transition-transform duration-200 group-hover:scale-95">
-                <Cpu className="w-4 h-4 text-[#C1DFDC]" />
+              <div className="w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center shrink-0 border border-[#D5D0C5] bg-white transition-transform duration-200 group-hover:scale-95 shadow-2xs">
+                <Image
+                  src="/logo.png"
+                  alt="E-Waste Value Recovery Logo"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-cover"
+                  priority
+                />
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#141413] leading-none">

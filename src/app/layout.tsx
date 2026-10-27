@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     "hardware lifecycle recovery"
   ],
   authors: [{ name: "E-Waste Value Recovery Project · Delhi Pilot" }],
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

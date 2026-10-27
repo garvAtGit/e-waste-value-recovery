@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { Cpu, ShieldCheck, Scale, Leaf } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, Scale, Leaf } from "lucide-react";
 
 export function Footer() {
   return (
@@ -10,8 +11,14 @@ export function Footer() {
           {/* Col 1: Institutional Statement & Wordmark */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-sm bg-[#257A72] text-[#F7F5EE] flex items-center justify-center font-bold">
-                <Cpu className="w-4 h-4 text-[#E9F3F2]" />
+              <div className="w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center shrink-0 border border-[#3A3834] bg-white">
+                <Image
+                  src="/logo.png"
+                  alt="E-Waste Value Recovery Logo"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <span className="font-serif text-lg font-bold text-[#F7F5EE] tracking-tight block">

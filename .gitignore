@@ -43,3 +43,11 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# presentation scripts and generated slides
+*.pptx
+build_presentation.py
+export_all.ps1
+export_all_slides.py
+slide_*.png
+RESEARCH_AND_SOURCES.md
