@@ -88,10 +88,10 @@ export function PathwayGrid() {
                   {pathway.caveats.length > 0 ? "Prerequisites Exist" : "Unrestricted"}
                 </span>
                 <Link
-                  href={`/find-option?pathway=${pathway.id}`}
+                  href={pathway.id === "sell-cash" ? "/sell-phone" : `/find-option?pathway=${pathway.id}`}
                   className="text-xs font-mono uppercase text-[#1B3B2B] font-semibold hover:underline flex items-center gap-1"
                 >
-                  <span>Evaluate Option</span>
+                  <span>{pathway.id === "sell-cash" ? "Instant Phone Payout" : "Evaluate Option"}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-[#257A72]" />
                 </Link>
               </div>

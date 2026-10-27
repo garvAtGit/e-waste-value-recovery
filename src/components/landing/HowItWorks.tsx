@@ -108,19 +108,27 @@ export function HowItWorks() {
         <div className="mt-12 p-6 bg-[#EFECE2] border border-[#D4CDC0] rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="font-serif font-bold text-base text-[#141413] block">
-              Ready to diagnose your retired equipment?
+              Ready to recover value from retired equipment?
             </span>
             <span className="text-xs text-[#6B675E] block font-sans">
-              Takes 90 seconds. No user registration or contact number required to view full trade-off comparisons.
+              Takes 90 seconds. Instant phone valuation or full 6-pathway diagnostic across Delhi NCR.
             </span>
           </div>
-          <Link
-            href="/find-option"
-            className="px-5 py-2.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm shrink-0 flex items-center gap-1.5 transition-colors"
-          >
-            <span>Start Assessment</span>
-            <ArrowUpRight className="w-4 h-4 text-[#C1DFDC]" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <Link
+              href="/sell-phone"
+              className="px-4 py-2.5 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
+            >
+              <span>Sell Phone</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
+            </Link>
+            <Link
+              href="/find-option"
+              className="px-4 py-2.5 bg-[#FAF8F3] hover:bg-[#EAE6DB] text-[#141413] border border-[#D4CDC0] text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
+            >
+              <span>Other Hardware</span>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

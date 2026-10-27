@@ -128,10 +128,10 @@ export function CategorySection() {
                     DPCC Intake Eligible
                   </span>
                   <Link
-                    href={`/find-option?category=${cat.slug}`}
+                    href={cat.slug === "smartphones-tablets" ? "/sell-phone" : `/find-option?category=${cat.slug}`}
                     className="text-xs font-mono uppercase text-[#1B3B2B] font-semibold hover:underline flex items-center gap-1"
                   >
-                    <span>Assess Category</span>
+                    <span>{cat.slug === "smartphones-tablets" ? "Sell Phone (Instant Payout)" : "Assess Category"}</span>
                     <ArrowUpRight className="w-3.5 h-3.5 text-[#257A72]" />
                   </Link>
                 </div>

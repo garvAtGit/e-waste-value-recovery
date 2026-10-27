@@ -266,6 +266,25 @@ export function ComparisonWorkflow({
             })}
           </div>
 
+          {/* Dedicated Phone Resale Callout */}
+          {categorySlug === "smartphones-tablets" && (
+            <div className="p-4 bg-[#EBF2ED] border border-[#C3D9CB] rounded-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-mono text-xs text-[#1B3B2B] animate-fade-in">
+              <div className="space-y-0.5">
+                <span className="font-bold uppercase tracking-wider block">Selling a Smartphone in Delhi?</span>
+                <span className="text-[11px] text-[#2D5A42] block font-sans">
+                  Use our guided phone valuation to compare instant doorstep Cashify payouts, Croma exchange vouchers, and Apple Saket trade-in quotes with itemized inspection deductions.
+                </span>
+              </div>
+              <Link
+                href="/sell-phone"
+                className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-[11px] font-mono uppercase tracking-wider rounded-xs flex items-center gap-1.5 shrink-0 transition-colors"
+              >
+                <span>Instant Phone Valuation</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
+              </Link>
+            </div>
+          )}
+
           {/* Specific Model (Optional) */}
           <div className="pt-4 border-t border-[#E5E0D4] space-y-1.5 max-w-md">
             <label className="block text-xs font-mono uppercase text-[#141413] tracking-wider">

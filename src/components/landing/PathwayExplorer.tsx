@@ -465,10 +465,10 @@ export function PathwayExplorer() {
                   LOOKING FOR DELHI PROVIDERS?
                 </span>
                 <Link
-                  href="/find-option"
+                  href={selectedCategory === "smartphones-tablets" && !rec.isHazardous ? "/sell-phone" : "/find-option"}
                   className="px-4 py-2 bg-[#1B3B2B] hover:bg-[#142D21] text-[#F7F5EE] text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
                 >
-                  <span>Run Full Evaluation</span>
+                  <span>{selectedCategory === "smartphones-tablets" && !rec.isHazardous ? "Sell Phone (Instant Payout)" : "Run Full Evaluation"}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-[#C1DFDC]" />
                 </Link>
               </div>
