@@ -14,10 +14,11 @@ interface NavItem {
 
 const PRIMARY_NAV: NavItem[] = [
   { href: "/sell-phone", label: "Sell Phone", index: "01", badge: "Instant Payout" },
-  { href: "/find-option", label: "Assess Other", index: "02" },
-  { href: "/directory", label: "Directory", index: "03" },
-  { href: "/dashboard", label: "Cases", index: "04" },
-  { href: "/analytics", label: "Impact & LCA", index: "05" },
+  { href: "/repair-vs-sell", label: "Repair vs Sell", index: "02" },
+  { href: "/find-option", label: "Assess Other", index: "03" },
+  { href: "/directory", label: "Directory", index: "04" },
+  { href: "/dashboard", label: "Cases", index: "05" },
+  { href: "/analytics", label: "Impact & LCA", index: "06" },
 ];
 
 function HeaderFallback() {

@@ -88,6 +88,16 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-xs font-mono text-[#A69E8C]">
               <li>
+                <Link href="/sell-phone" className="hover:text-[#F7F5EE] transition-colors font-semibold text-[#F7F5EE]">
+                  Sell Phone (Instant Payout)
+                </Link>
+              </li>
+              <li>
+                <Link href="/repair-vs-sell" className="hover:text-[#F7F5EE] transition-colors">
+                  Repair vs. Sell Matrix
+                </Link>
+              </li>
+              <li>
                 <Link href="/directory" className="hover:text-[#F7F5EE] transition-colors">
                   Provider Directory
                 </Link>

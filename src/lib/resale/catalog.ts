@@ -484,3 +484,20 @@ export function getModelsByBrand(brand: string): PhoneModel[] {
 export function getModelById(id: string): PhoneModel | undefined {
   return PHONE_CATALOG.find((m) => m.id === id);
 }
+
+/**
+ * Checks whether quote/pricing data is stale based on a maximum age threshold.
+ * Uses October 2026 as the active pilot baseline date.
+ */
+export function isQuoteStale(lastVerifiedDate: string, maxAgeDays = 60): boolean {
+  if (!lastVerifiedDate) return true;
+  try {
+    const verifiedTime = new Date(lastVerifiedDate).getTime();
+    if (isNaN(verifiedTime)) return true;
+    const pilotDate = new Date("2026-10-27T00:00:00Z").getTime();
+    const ageDays = (pilotDate - verifiedTime) / (1000 * 60 * 60 * 24);
+    return ageDays > maxAgeDays;
+  } catch {
+    return true;
+  }
+}

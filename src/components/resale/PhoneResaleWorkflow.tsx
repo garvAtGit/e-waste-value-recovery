@@ -7,6 +7,7 @@ import {
   PhoneCondition,
   PhoneAccessory,
   ProviderResaleOffer,
+  ResaleRankingMode,
 } from "@/lib/resale/types";
 import {
   PHONE_BRANDS,
@@ -18,6 +19,8 @@ import {
   getDelhiLocalityName,
 } from "@/lib/resale/catalog";
 import { evaluatePhoneResaleOffers } from "@/lib/resale/engine";
+import { calculateRepairVsSell } from "@/lib/resale/repair-vs-sell";
+import { RepairVsSellCard } from "./RepairVsSellCard";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -27,6 +30,7 @@ import {
   RotateCcw,
   MapPin,
   ArrowUpRight,
+  Wrench,
 } from "lucide-react";
 
 export function PhoneResaleWorkflow() {
@@ -46,6 +50,8 @@ export function PhoneResaleWorkflow() {
     "box",
   ]);
   const [pincode, setPincode] = useState<string>("110001");
+  const [rankingMode, setRankingMode] = useState<ResaleRankingMode>("highest_cash");
+  const [stage4Tab, setStage4Tab] = useState<"offers" | "repair_vs_sell">("offers");
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,6 +73,30 @@ export function PhoneResaleWorkflow() {
   // Compute live valuation & ranked provider offers
   const valuation = useMemo(() => {
     return evaluatePhoneResaleOffers({
+      brand: selectedBrand,
+      modelId: activeModel.id,
+      modelName: activeModel.name,
+      storage: selectedStorage,
+      condition: selectedCondition,
+      selectedFaults,
+      accessories: selectedAccessories,
+      pincode,
+      rankingMode,
+    });
+  }, [
+    selectedBrand,
+    activeModel,
+    selectedStorage,
+    selectedCondition,
+    selectedFaults,
+    selectedAccessories,
+    pincode,
+    rankingMode,
+  ]);
+
+  // Compute live Repair vs. Sell economic comparison
+  const repairVsSellAnalysis = useMemo(() => {
+    return calculateRepairVsSell({
       brand: selectedBrand,
       modelId: activeModel.id,
       modelName: activeModel.name,
@@ -468,6 +498,22 @@ export function PhoneResaleWorkflow() {
                   );
                 })}
               </div>
+
+              {/* Repair vs Sell preview hint if faults selected */}
+              {selectedFaults.length > 0 && (
+                <div className="p-3 bg-[#FAF8F3] border border-[#D5D0C5] rounded-sm text-xs font-mono flex items-start gap-2.5">
+                  <Wrench className="w-4 h-4 text-[#257A72] shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <strong className="text-[#141413] block">
+                      Repair vs. Sell Economic Comparison Available:
+                    </strong>
+                    <p className="text-[#5A574F] font-sans text-xs">
+                      You have selected {selectedFaults.length} hardware fault{selectedFaults.length > 1 ? "s" : ""}.
+                      In Step 04, our transparent comparison matrix will evaluate whether fixing these faults in Delhi before selling produces a higher net cash return.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -630,14 +676,26 @@ export function PhoneResaleWorkflow() {
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setActiveStage(1)}
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1B3B2B] hover:underline self-start sm:self-center"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Adjust Diagnostic</span>
-              </button>
+              <div className="flex items-center gap-3 self-start sm:self-center">
+                {repairVsSellAnalysis.hasFaultsToRepair && (
+                  <button
+                    type="button"
+                    onClick={() => setStage4Tab(stage4Tab === "repair_vs_sell" ? "offers" : "repair_vs_sell")}
+                    className="inline-flex items-center gap-1.5 font-mono text-xs text-[#257A72] bg-[#E9F3F2] px-2.5 py-1 rounded-sm border border-[#C1DFDC] hover:bg-[#D5EAE8] transition-colors"
+                  >
+                    <Wrench className="w-3.5 h-3.5" />
+                    <span>{stage4Tab === "repair_vs_sell" ? "View Resale Offers" : "Repair vs. Sell Matrix"}</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setActiveStage(1)}
+                  className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1B3B2B] hover:underline"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Adjust Diagnostic</span>
+                </button>
+              </div>
             </div>
 
             {/* Valuation Ledger Formula */}
@@ -686,158 +744,296 @@ export function PhoneResaleWorkflow() {
             </div>
           )}
 
-          {/* Provider Offers Grid */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#E5E0D8] font-mono text-xs">
-              <h3 className="font-serif text-lg font-bold text-[#141413]">
-                Verified Payout Offers ({valuation.offers.length})
-              </h3>
-              <span className="text-[#8E8B82] text-[11px]">
-                Ranked transparently by Net Verified Payout &amp; Doorstep Logistics
-              </span>
-            </div>
+          {/* Stage 4 Sub-Tabs: Offers vs Repair-vs-Sell Matrix */}
+          <div className="flex border-b border-[#E5E0D8] space-x-2">
+            <button
+              type="button"
+              onClick={() => setStage4Tab("offers")}
+              className={`pb-3 px-4 text-xs font-mono uppercase tracking-wider font-semibold border-b-2 transition-all flex items-center gap-2 ${
+                stage4Tab === "offers"
+                  ? "border-[#1B3B2B] text-[#1B3B2B]"
+                  : "border-transparent text-[#736F66] hover:text-[#141413]"
+              }`}
+            >
+              <span>Ranked Resale Offers ({valuation.offers.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage4Tab("repair_vs_sell")}
+              className={`pb-3 px-4 text-xs font-mono uppercase tracking-wider font-semibold border-b-2 transition-all flex items-center gap-2 ${
+                stage4Tab === "repair_vs_sell"
+                  ? "border-[#1B3B2B] text-[#1B3B2B]"
+                  : "border-transparent text-[#736F66] hover:text-[#141413]"
+              }`}
+            >
+              <Wrench className="w-3.5 h-3.5 text-[#257A72]" />
+              <span>Repair vs. Sell Matrix</span>
+              {repairVsSellAnalysis.hasFaultsToRepair && (
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded-xs font-mono font-bold ${
+                    repairVsSellAnalysis.economics.isRepairEconomicallyBeneficial
+                      ? "bg-[#EDF5F0] text-[#1B3B2B]"
+                      : "bg-[#FAF9F5] text-[#8C5E28]"
+                  }`}
+                >
+                  {repairVsSellAnalysis.economics.isRepairEconomicallyBeneficial ? "+Profitable" : "Evaluated"}
+                </span>
+              )}
+            </button>
+          </div>
 
-            <div className="grid grid-cols-1 gap-6">
-              {valuation.offers.map((offer) => {
-                const isPrimary = offer.rankingPosition === 1 && !valuation.isHazardous;
+          {/* Tab Content: Repair vs. Sell Comparison */}
+          {stage4Tab === "repair_vs_sell" && (
+            <RepairVsSellCard
+              analysis={repairVsSellAnalysis}
+              onProceedToResale={() => setStage4Tab("offers")}
+            />
+          )}
 
-                return (
-                  <div
-                    key={`${offer.providerSlug}-${offer.offerType}`}
-                    className={`bg-white rounded-sm border transition-all p-6 sm:p-7 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6 ${
-                      isPrimary
-                        ? "border-[#1B3B2B] ring-2 ring-[#1B3B2B]/20"
-                        : "border-[#E5E0D8] hover:border-[#BDB9AE]"
+          {/* Tab Content: Provider Offers Grid */}
+          {stage4Tab === "offers" && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E0D8]">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#141413]">
+                    Verified Resale Offers ({valuation.offers.length})
+                  </h3>
+                  <span className="text-[#8E8B82] font-mono text-[11px] block mt-0.5">
+                    {valuation.rankingExplanation}
+                  </span>
+                </div>
+
+                {/* Ranking Mode Switcher */}
+                <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+                  <span className="text-[10px] uppercase text-[#8E8B82] mr-1">Sort:</span>
+                  <button
+                    type="button"
+                    onClick={() => setRankingMode("highest_cash")}
+                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                      rankingMode === "highest_cash"
+                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
+                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
                     }`}
                   >
-                    {/* Left Offer Details Column */}
-                    <div className="space-y-3.5 flex-1">
-                      {/* Top Tag Strip */}
-                      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
-                        <span
-                          className={`px-2 py-0.5 rounded-sm font-bold ${
-                            isPrimary
-                              ? "bg-[#1B3B2B] text-white"
-                              : "bg-[#FAF9F5] text-[#5A574F] border border-[#E5E0D8]"
-                          }`}
-                        >
-                          Rank #{offer.rankingPosition} &bull; {offer.rankingReason}
-                        </span>
+                    Highest Cash
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRankingMode("most_convenient")}
+                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                      rankingMode === "most_convenient"
+                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
+                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
+                    }`}
+                  >
+                    Most Convenient
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRankingMode("most_certain")}
+                    className={`px-2.5 py-1 rounded-sm text-[11px] border transition-colors ${
+                      rankingMode === "most_certain"
+                        ? "bg-[#1B3B2B] text-white border-[#1B3B2B] font-semibold"
+                        : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:bg-white"
+                    }`}
+                  >
+                    Most Certain
+                  </button>
+                </div>
+              </div>
 
-                        <span
-                          className={`px-2 py-0.5 rounded-sm font-semibold border ${
-                            offer.quoteStatus === "confirmed_quote"
-                              ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
-                              : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
-                          }`}
-                        >
-                          {offer.quoteStatus === "confirmed_quote"
-                            ? "Confirmed Diagnostic Quote"
-                            : "Indicative Estimate"}
-                        </span>
+              <div className="grid grid-cols-1 gap-6">
+                {valuation.offers.map((offer) => {
+                  const isPrimary = offer.rankingPosition === 1 && !valuation.isHazardous;
 
-                        {offer.isPincodeCovered && (
-                          <span className="bg-[#EDF5F0] text-[#1B3B2B] px-2 py-0.5 rounded-sm border border-[#C6DFD0]">
-                            Doorstep Covered ({pincode})
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Provider Title & Payment Mode */}
-                      <div>
-                        <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
-                          {offer.providerName}
-                        </h4>
-                        <span className="font-mono text-xs text-[#5A574F] block mt-0.5">
-                          Settlement: <strong className="text-[#141413]">{offer.paymentMethod}</strong>
-                        </span>
-                      </div>
-
-                      {/* Inspection Deductions Policy (Strict Transparency) */}
-                      <div className="bg-[#FAF9F5] rounded-sm p-4 border border-[#E5E0D8] text-xs font-mono space-y-2">
-                        <div>
-                          <strong className="text-[#141413] uppercase text-[10px] block mb-0.5">
-                            Inspection &amp; Deduction Policy:
-                          </strong>
-                          <p className="text-[#5A574F] font-sans text-xs leading-relaxed">
-                            {offer.inspectionDeductionsPolicy}
-                          </p>
-                        </div>
-                        <div className="pt-2 border-t border-[#E5E0D8] flex flex-wrap gap-4 text-[11px] text-[#736F66]">
-                          <span>
-                            <strong>Pickup:</strong> {offer.pickupDetails}
-                          </span>
-                          <span>
-                            <strong>Drop-off:</strong> {offer.dropoffDetails}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Audit Evidence Link */}
-                      <div className="flex items-center gap-3 font-mono text-[11px] text-[#8E8B82]">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-[#8E8B82]" />
-                          Verified: {offer.lastVerifiedDate}
-                        </span>
-                        {offer.evidenceUrl && (
-                          <a
-                            href={offer.evidenceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[#1B3B2B] hover:underline"
+                  return (
+                    <div
+                      key={`${offer.providerSlug}-${offer.offerType}`}
+                      className={`bg-white rounded-sm border transition-all p-6 sm:p-7 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6 ${
+                        isPrimary
+                          ? "border-[#1B3B2B] ring-2 ring-[#1B3B2B]/20"
+                          : "border-[#E5E0D8] hover:border-[#BDB9AE]"
+                      }`}
+                    >
+                      {/* Left Offer Details Column */}
+                      <div className="space-y-3.5 flex-1">
+                        {/* Top Tag Strip */}
+                        <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+                          <span
+                            className={`px-2 py-0.5 rounded-sm font-bold ${
+                              isPrimary
+                                ? "bg-[#1B3B2B] text-white"
+                                : "bg-[#FAF9F5] text-[#5A574F] border border-[#E5E0D8]"
+                            }`}
                           >
-                            <span>Evidence Source</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                            {offer.rankingReason}
+                          </span>
 
-                    {/* Right Action & Payout Column */}
-                    <div className="md:w-64 shrink-0 flex flex-col justify-between pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-[#E5E0D8] md:pl-6 space-y-4 font-mono">
-                      <div>
-                        <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block mb-0.5">
-                          Estimated Net Payout
-                        </span>
-                        <div className="flex items-baseline gap-1">
-                          <strong className="text-3xl sm:text-4xl font-serif font-bold text-[#141413]">
-                            ₹{offer.estimatedNetPayout.toLocaleString()}
-                          </strong>
+                          {/* Financial Type Badge: Distinguish Cash from Vouchers */}
+                          <span
+                            className={`px-2 py-0.5 rounded-sm font-semibold border ${
+                              offer.financialType === "cash"
+                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
+                                : offer.financialType === "voucher"
+                                ? "bg-[#FFF9F5] text-[#8C5E28] border-[#E8DCBF]"
+                                : offer.financialType === "trade_in_credit"
+                                ? "bg-[#E9F3F2] text-[#257A72] border-[#C1DFDC]"
+                                : offer.financialType === "free_disposal"
+                                ? "bg-[#FFF0E8] text-[#C8532C] border-[#F2C2B2]"
+                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
+                            }`}
+                          >
+                            {offer.financialType === "cash"
+                              ? "Direct Bank Cash"
+                              : offer.financialType === "voucher"
+                              ? "Store Voucher (Non-Cash)"
+                              : offer.financialType === "trade_in_credit"
+                              ? "Apple Trade-In Credit"
+                              : offer.financialType === "free_disposal"
+                              ? "Hazardous Recovery"
+                              : "P2P Buyer Cash"}
+                          </span>
+
+                          {/* Quote Status Badge */}
+                          <span
+                            className={`px-2 py-0.5 rounded-sm font-semibold border ${
+                              offer.quoteStatus === "published_price"
+                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0]"
+                                : offer.quoteStatus === "confirmed_diagnostic_quote"
+                                ? "bg-[#E9F3F2] text-[#257A72] border-[#C1DFDC]"
+                                : offer.quoteStatus === "expired_stale_estimate"
+                                ? "bg-[#FFF9F5] text-[#C8532C] border-[#F3D1C2]"
+                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
+                            }`}
+                          >
+                            {offer.quoteStatusLabel}
+                          </span>
+
+                          {/* Explicit Pickup / Logistics Badge */}
+                          <span
+                            className={`px-2 py-0.5 rounded-sm border ${
+                              offer.pickupBadgeStatus === "pickup_confirmed"
+                                ? "bg-[#EDF5F0] text-[#1B3B2B] border-[#C6DFD0] font-semibold"
+                                : offer.pickupBadgeStatus === "not_available_pincode"
+                                ? "bg-[#FFF9F5] text-[#C8532C] border-[#F3D1C2]"
+                                : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8]"
+                            }`}
+                          >
+                            {offer.pickupBadgeLabel}
+                          </span>
                         </div>
-                        <span className="text-[11px] text-[#736F66] block mt-0.5">
-                          Expected range: ₹{offer.priceRange.min.toLocaleString()} - ₹{offer.priceRange.max.toLocaleString()}
-                        </span>
+
+                        {/* Provider Title & Payment Mode */}
+                        <div>
+                          <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#141413]">
+                            {offer.providerName}
+                          </h4>
+                          <span className="font-mono text-xs text-[#5A574F] block mt-0.5">
+                            Settlement: <strong className="text-[#141413]">{offer.paymentMethod}</strong>
+                          </span>
+                        </div>
+
+                        {/* Quote Basis & Provenance */}
+                        <div className="text-[11px] font-mono text-[#6B675E] bg-[#F7F5EE] p-2.5 rounded-xs border border-[#DFD9CD]">
+                          <strong className="text-[#141413] uppercase text-[10px] block mb-0.5">
+                            Quote Basis:
+                          </strong>
+                          <span>{offer.quoteBasis}</span>
+                        </div>
+
+                        {/* Inspection Deductions Policy (Strict Transparency) */}
+                        <div className="bg-[#FAF9F5] rounded-sm p-4 border border-[#E5E0D8] text-xs font-mono space-y-2">
+                          <div>
+                            <strong className="text-[#141413] uppercase text-[10px] block mb-0.5">
+                              Inspection &amp; Deduction Policy:
+                            </strong>
+                            <p className="text-[#5A574F] font-sans text-xs leading-relaxed">
+                              {offer.inspectionDeductionsPolicy}
+                            </p>
+                          </div>
+                          <div className="pt-2 border-t border-[#E5E0D8] flex flex-wrap gap-4 text-[11px] text-[#736F66]">
+                            <span>
+                              <strong>Pickup:</strong> {offer.pickupDetails}
+                            </span>
+                            <span>
+                              <strong>Drop-off:</strong> {offer.dropoffDetails}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Audit Evidence Link */}
+                        <div className="flex items-center gap-3 font-mono text-[11px] text-[#8E8B82]">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3 text-[#8E8B82]" />
+                            Verified: {offer.lastVerifiedDate}
+                          </span>
+                          {offer.evidenceUrl && (
+                            <a
+                              href={offer.evidenceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[#1B3B2B] hover:underline"
+                            >
+                              <span>Evidence Source</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
                       </div>
 
-                      <button
-                        type="button"
-                        disabled={isSubmitting || !offer.isEligible}
-                        onClick={() => handleSelectOffer(offer)}
-                        className={`w-full py-3.5 px-4 font-mono uppercase tracking-wider font-semibold rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 ${
-                          isPrimary
-                            ? "bg-[#1B3B2B] hover:bg-[#132A1F] text-white"
-                            : "bg-[#141413] hover:bg-[#20201E] text-white"
-                        }`}
-                      >
-                        {isSubmitting ? (
-                          <span>Locking Quote...</span>
-                        ) : (
-                          <>
-                            <span>Select Offer &amp; Lock Quote</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </>
-                        )}
-                      </button>
+                      {/* Right Action & Payout Column */}
+                      <div className="md:w-64 shrink-0 flex flex-col justify-between pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-[#E5E0D8] md:pl-6 space-y-4 font-mono">
+                        <div>
+                          <span className="text-[10px] text-[#8E8B82] uppercase tracking-wider block mb-0.5">
+                            {offer.financialType === "voucher"
+                              ? "Estimated Store Credit Voucher"
+                              : offer.financialType === "trade_in_credit"
+                              ? "Estimated Trade-In Credit"
+                              : "Estimated Net Cash Payout"}
+                          </span>
+                          <div className="flex items-baseline gap-1">
+                            <strong className="text-3xl sm:text-4xl font-serif font-bold text-[#141413]">
+                              ₹{offer.estimatedNetPayout.toLocaleString()}
+                            </strong>
+                          </div>
+                          <span className="text-[11px] text-[#736F66] block mt-0.5">
+                            Expected range: ₹{offer.priceRange.min.toLocaleString()} - ₹{offer.priceRange.max.toLocaleString()}
+                          </span>
+                          <span className="text-[10px] text-[#8E8B82] block mt-1 italic font-sans">
+                            Amount is pre-inspection estimate. Final settlement confirmed after diagnostic verification.
+                          </span>
+                        </div>
 
-                      <p className="text-[10px] text-[#8E8B82] leading-tight text-center">
-                        Creates an active recovery case docket. No registration or upfront fee required.
-                      </p>
+                        <button
+                          type="button"
+                          disabled={isSubmitting || !offer.isEligible}
+                          onClick={() => handleSelectOffer(offer)}
+                          className={`w-full py-3.5 px-4 font-mono uppercase tracking-wider font-semibold rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 ${
+                            isPrimary
+                              ? "bg-[#1B3B2B] hover:bg-[#132A1F] text-white"
+                              : "bg-[#141413] hover:bg-[#20201E] text-white"
+                          }`}
+                        >
+                          {isSubmitting ? (
+                            <span>Locking Quote...</span>
+                          ) : (
+                            <>
+                              <span>Select Offer &amp; Lock Quote</span>
+                              <ArrowUpRight className="w-3.5 h-3.5" />
+                            </>
+                          )}
+                        </button>
+
+                        <p className="text-[10px] text-[#8E8B82] leading-tight text-center">
+                          Creates an active recovery case docket. No registration or upfront fee required.
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

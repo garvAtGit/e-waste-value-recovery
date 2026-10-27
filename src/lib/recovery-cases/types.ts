@@ -42,6 +42,7 @@ export interface CreateCaseInput {
   providerId?: string | null;
   assessmentInput?: ComparisonInput;
   userNotes?: string;
+  evidenceNotes?: string;
   financialValueInr?: number | null;
 }
 

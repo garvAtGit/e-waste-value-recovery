@@ -303,7 +303,7 @@ export class RecoveryRepository {
       financial_value_inr: input.financialValueInr ?? null,
       rejection_or_failure_reason: null,
       user_notes: input.userNotes || null,
-      evidence_notes: null,
+      evidence_notes: input.evidenceNotes || null,
       evidence_url: null,
       created_at: now,
       updated_at: now,
