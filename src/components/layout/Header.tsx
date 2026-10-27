@@ -15,11 +15,13 @@ interface NavItem {
 
 const PRIMARY_NAV: NavItem[] = [
   { href: "/sell-phone", label: "Sell Phone", index: "01", badge: "Instant Payout" },
-  { href: "/repair-vs-sell", label: "Repair vs Sell", index: "02" },
-  { href: "/find-option", label: "Assess Other", index: "03" },
-  { href: "/directory", label: "Directory", index: "04" },
-  { href: "/dashboard", label: "Cases", index: "05" },
-  { href: "/analytics", label: "Impact & LCA", index: "06" },
+  { href: "/diagnostics", label: "Diagnostics", index: "02", badge: "Live Web" },
+  { href: "/salvage", label: "Organ Salvage", index: "03", badge: "Nothing BOM" },
+  { href: "/community-pool", label: "Community Pool", index: "04", badge: "RWA 50kg" },
+  { href: "/data-wipe", label: "Data Wipe", index: "05" },
+  { href: "/repair-vs-sell", label: "Repair vs Sell", index: "06" },
+  { href: "/directory", label: "Directory", index: "07" },
+  { href: "/dashboard", label: "Cases", index: "08" },
 ];
 
 function HeaderFallback() {

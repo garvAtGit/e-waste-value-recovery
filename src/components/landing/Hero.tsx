@@ -57,6 +57,41 @@ export function Hero() {
               </Link>
             </div>
 
+            {/* New Advanced Modules Discovery Pills */}
+            <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
+              <span className="text-[#736F66] text-[10px] uppercase font-bold tracking-wider">
+                Ecosystem Tools:
+              </span>
+              <Link
+                href="/diagnostics"
+                className="px-2.5 py-1 bg-[#F3F9F8] border border-[#257A72]/40 text-[#257A72] hover:bg-[#257A72]/15 rounded-xs font-semibold flex items-center gap-1 transition-colors"
+              >
+                <span>Live Hardware Diagnostic</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
+              <Link
+                href="/salvage"
+                className="px-2.5 py-1 bg-[#FAF8F3] border border-[#DFD9CD] text-[#141413] hover:bg-[#EAE5D9] rounded-xs flex items-center gap-1 transition-colors"
+              >
+                <span>&quot;Organ Donor&quot; Salvage (Nothing Lineup)</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
+              <Link
+                href="/community-pool"
+                className="px-2.5 py-1 bg-[#FAF8F3] border border-[#DFD9CD] text-[#141413] hover:bg-[#EAE5D9] rounded-xs flex items-center gap-1 transition-colors"
+              >
+                <span>Society 50kg Pooling</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
+              <Link
+                href="/data-wipe"
+                className="px-2.5 py-1 bg-[#FAF8F3] border border-[#DFD9CD] text-[#141413] hover:bg-[#EAE5D9] rounded-xs flex items-center gap-1 transition-colors"
+              >
+                <span>NIST 800-88 Data Wipe</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
+            </div>
+
             {/* Key Transparency Signals */}
             <div className="pt-6 border-t border-[#DFD9CD] grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono text-[#736F66]">
               <div className="space-y-0.5">

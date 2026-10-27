@@ -100,6 +100,26 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/diagnostics" className="hover:text-[#F7F5EE] transition-colors text-[#257A72] font-semibold">
+                  Hardware Diagnostics (Live)
+                </Link>
+              </li>
+              <li>
+                <Link href="/salvage" className="hover:text-[#F7F5EE] transition-colors">
+                  Organ Donor Salvage (BOM)
+                </Link>
+              </li>
+              <li>
+                <Link href="/community-pool" className="hover:text-[#F7F5EE] transition-colors">
+                  Community Pooling (RWA 50kg)
+                </Link>
+              </li>
+              <li>
+                <Link href="/data-wipe" className="hover:text-[#F7F5EE] transition-colors">
+                  Data Wipe (NIST 800-88)
+                </Link>
+              </li>
+              <li>
                 <Link href="/repair-vs-sell" className="hover:text-[#F7F5EE] transition-colors">
                   Repair vs. Sell Matrix
                 </Link>

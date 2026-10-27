@@ -12,6 +12,7 @@ export const PHONE_BRANDS: PhoneBrand[] = [
   "Google",
   "Xiaomi",
   "Vivo",
+  "Nothing",
 ];
 
 export const PHONE_CATALOG: PhoneModel[] = [
@@ -327,6 +328,62 @@ export const PHONE_CATALOG: PhoneModel[] = [
     basePricesByStorage: {
       "128GB": 13500,
       "256GB": 15500,
+    },
+  },
+
+  // --- NOTHING ---
+  {
+    id: "nothing-phone-2",
+    brand: "Nothing",
+    name: "Nothing Phone (2)",
+    releaseYear: 2023,
+    storageOptions: ["128GB", "256GB", "512GB"],
+    basePricesByStorage: {
+      "128GB": 19500,
+      "256GB": 22500,
+      "512GB": 26000,
+    },
+  },
+  {
+    id: "nothing-phone-2a",
+    brand: "Nothing",
+    name: "Nothing Phone (2a)",
+    releaseYear: 2024,
+    storageOptions: ["128GB", "256GB"],
+    basePricesByStorage: {
+      "128GB": 13500,
+      "256GB": 15500,
+    },
+  },
+  {
+    id: "nothing-phone-2a-plus",
+    brand: "Nothing",
+    name: "Nothing Phone (2a) Plus",
+    releaseYear: 2024,
+    storageOptions: ["256GB"],
+    basePricesByStorage: {
+      "256GB": 17000,
+    },
+  },
+  {
+    id: "nothing-phone-1",
+    brand: "Nothing",
+    name: "Nothing Phone (1)",
+    releaseYear: 2022,
+    storageOptions: ["128GB", "256GB"],
+    basePricesByStorage: {
+      "128GB": 12000,
+      "256GB": 14000,
+    },
+  },
+  {
+    id: "nothing-phone-4b",
+    brand: "Nothing",
+    name: "Nothing 4b / CMF Phone 1",
+    releaseYear: 2024,
+    storageOptions: ["128GB"],
+    basePricesByStorage: {
+      "128GB": 9800,
     },
   },
 ];

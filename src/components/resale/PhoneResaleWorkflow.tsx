@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   PhoneBrand,
@@ -384,13 +385,13 @@ export function PhoneResaleWorkflow() {
               <span className="block text-xs font-mono uppercase tracking-wider text-[#5A574F]">
                 Filter by Brand:
               </span>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 font-mono text-xs">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2 font-mono text-xs">
                 {PHONE_BRANDS.map((brand) => (
                   <button
                     key={brand}
                     type="button"
                     onClick={() => handleBrandChange(brand)}
-                    className={`py-2.5 px-3 text-center border rounded-sm font-semibold transition-all min-h-[44px] flex items-center justify-center ${
+                    className={`py-2.5 px-2 text-center border rounded-sm font-semibold transition-all min-h-[44px] flex items-center justify-center ${
                       selectedBrand === brand
                         ? "bg-[#1B3B2B] text-white border-[#1B3B2B] shadow-xs"
                         : "bg-[#FAF9F5] text-[#5A574F] border-[#E5E0D8] hover:border-[#141413] hover:text-[#141413]"
@@ -500,6 +501,49 @@ export function PhoneResaleWorkflow() {
               Disclose realistic cosmetic and functional condition. Honest self-diagnosis guarantees that your locked quote matches what the technician offers during doorstep inspection.
             </p>
           </div>
+
+          {/* Interactive Live Diagnostics Banner */}
+          <div className="p-4 bg-[#F3F9F8] border border-[#257A72]/40 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#257A72] animate-pulse" />
+                <span className="font-mono text-xs font-bold text-[#257A72] uppercase tracking-wider">
+                  Automate Inspection · Run Live Hardware Diagnostic
+                </span>
+              </div>
+              <p className="text-xs text-[#5A5751]">
+                Test your touchscreen digitizer, screen pixels, cameras, and audio directly in your browser. Locks your quote against doorstep deductions.
+              </p>
+            </div>
+            <Link
+              href="/diagnostics"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#257A72] hover:bg-[#1D6059] text-white font-mono text-xs font-bold rounded-sm shadow-xs shrink-0"
+            >
+              <span>Launch Live Diagnostic</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Organ Donor Salvage Alert for severe/dead condition */}
+          {(selectedCondition === "major_fault" || selectedCondition === "hazardous") && (
+            <div className="p-4 bg-[#FFFBEB] border border-[#D97706]/40 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <span className="font-mono text-xs font-bold text-[#D97706] uppercase tracking-wider block">
+                  Have a Dead Motherboard or Severe Liquid Damage?
+                </span>
+                <p className="text-xs text-[#78350F]">
+                  Don&apos;t settle for ₹150 scrap. Your OEM screen, camera sensor, and housing are worth ₹3,500–₹7,000 to independent repairers.
+                </p>
+              </div>
+              <Link
+                href="/salvage"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#B45309] hover:bg-[#92400E] text-white font-mono text-xs font-bold rounded-sm shadow-xs shrink-0"
+              >
+                <span>Calculate &quot;Organ Donor&quot; Salvage</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
 
           {/* Condition Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

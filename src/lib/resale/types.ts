@@ -6,7 +6,8 @@ export type PhoneBrand =
   | "OnePlus"
   | "Google"
   | "Xiaomi"
-  | "Vivo";
+  | "Vivo"
+  | "Nothing";
 
 export interface PhoneModel {
   id: string;
